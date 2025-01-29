@@ -1,31 +1,30 @@
-import NextAuth from "next-auth";
-import GitHub from "@auth/core/providers/github";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "./lib/prisma";
+import NextAuth from "next-auth"
+import { PrismaAdapter } from "@auth/prisma-adapter"
+import { PrismaClient, Role } from "@prisma/client"
+import authConfig from "./auth.config"
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    GitHub({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    }),
-  ],
-  callbacks: {
-    async session({ session, user }) {
-      session.user.username = user.username;
-      session.user.id = user.id;
-      return session;
-    }
-  },
-  events: {
-    async createUser({ user }) {
-      if (!user.username) {
-        await prisma.user.update({
-          where: { id: Number(user.id) },
-          data: { username: null }
-        });
-      }
-    }
-  }
-});
+const prisma = new PrismaClient()
+
+export const { auth, handlers, signIn, signOut } = NextAuth({
+    callbacks: {
+        async jwt({ user, token }) {
+            if (user) {
+                token.role = user.role;
+                token.username = user.username;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token.sub && session.user) {
+                session.user.id = token.sub;
+                session.user.role = token.role as Role;
+                session.user.username = token.username;
+            }
+
+            return session;
+        }
+    },
+    adapter: PrismaAdapter(prisma),
+    session: { strategy: "jwt" },
+    ...authConfig,
+})

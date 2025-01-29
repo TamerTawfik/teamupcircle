@@ -1,25 +1,15 @@
-generator client {
-    provider = "prisma-client-js"
-}
-
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
-model User {
-    id            Int       @id @default(autoincrement())
-    name          String?
-    email         String    @unique
-    emailVerified DateTime?
-    image         String?
-    username      String?   @unique
-    accounts      Account[]
+generator client {
+    provider = "prisma-client-js"
 }
 
 model Account {
-    id                String  @id @default(uuid())
-    userId            Int
+    id                String  @id @default(cuid())
+    userId            String
     type              String
     provider          String
     providerAccountId String
@@ -30,7 +20,25 @@ model Account {
     scope             String?
     id_token          String? @db.Text
     session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
+}
+
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    passwordHash  String?
+    image         String?
+    username      String?   @unique
+    accounts      Account[]
+    role          Role      @default(MEMBER)
+}
+
+enum Role {
+    ADMIN
+    MEMBER
 }
