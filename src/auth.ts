@@ -22,7 +22,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             }
 
             return session;
-        }
+        },
+          
     },
     adapter: PrismaAdapter(prisma),
     session: { strategy: "jwt" },
