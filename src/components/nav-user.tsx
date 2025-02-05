@@ -5,7 +5,6 @@ import {
   Bell,
   ChevronsUpDown,
   CreditCard,
-  LogOut,
   Sparkles,
 } from "lucide-react";
 
@@ -26,8 +25,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useSession } from "next-auth/react";
-
-// import { Role } from "@prisma/client";
+import { Signout } from "@/components/sign-out";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -107,8 +105,7 @@ export function NavUser() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <LogOut />
-              Log out
+              <Signout />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
