@@ -6,6 +6,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { Header } from "@/components/header";
 
 export default async function Platformlayout({
   children,
@@ -24,6 +25,7 @@ export default async function Platformlayout({
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
           </div>
+          <Header />
         </header>
         {children}
       </SidebarInset>
