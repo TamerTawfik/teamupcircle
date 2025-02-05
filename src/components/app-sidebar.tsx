@@ -25,20 +25,21 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { useSession } from "next-auth/react";
 
 // This is sample data.
 const data = {
   user: {
     name: "shadcn",
+    username: "shadcn",
     email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    image: "/avatars/shadcn.jpg",
+    role: "",
   },
 
   navMain: [
     {
       title: "Explore Profiles",
-      url: "#",
+      url: "/members",
       icon: SquareTerminal,
       isActive: true,
     },
@@ -78,8 +79,6 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: session } = useSession();
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -104,7 +103,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={session?.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

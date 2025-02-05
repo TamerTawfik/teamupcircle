@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { auth, signOut } from "@/auth";
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default async function Home() {
   const session = await auth();
@@ -42,6 +43,7 @@ export default async function Home() {
                   Sign out
                 </Button>
               </form>
+              <ModeToggle />
             </div>
           ) : (
             <div>Something wrong...</div>
