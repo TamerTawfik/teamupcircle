@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {
-  BookOpen,
+  BookMarked,
   Bot,
   Command,
   Frame,
@@ -50,14 +50,14 @@ const data = {
       icon: Bot,
     },
     {
-      title: "Wishlist",
-      url: "#",
-      icon: BookOpen,
-    },
-    {
       title: "Messages",
       url: "#",
       icon: Settings2,
+    },
+    {
+      title: "Bookmarks",
+      url: "#",
+      icon: BookMarked,
     },
   ],
   projects: [
