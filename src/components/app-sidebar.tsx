@@ -6,7 +6,6 @@ import {
   Bot,
   Command,
   Frame,
-  Map,
   PieChart,
   Settings2,
   SquareTerminal,
@@ -63,18 +62,13 @@ const data = {
   projects: [
     {
       name: "Discover Projects",
-      url: "#",
+      url: "/discover-projects",
       icon: Frame,
     },
     {
       name: "My Projects",
-      url: "#",
+      url: "/my-projects",
       icon: PieChart,
-    },
-    {
-      name: "Create Project",
-      url: "#",
-      icon: Map,
     },
   ],
 };

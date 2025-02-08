@@ -15,7 +15,7 @@ import { formatDistance } from "date-fns";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function ProfileInfo({ profile }: { profile: any }) {
   return (
-    <div className="flex flex-col md:flex-row items-start gap-6 p-6 bg-card rounded-lg shadow-lg">
+    <div className="flex flex-col md:flex-row items-start gap-6 p-6 mb-6">
       <div className="relative">
         <Avatar className="h-32 w-32">
           <AvatarImage src={profile.avatar_url} alt={profile.login} />
@@ -71,7 +71,7 @@ export function ProfileInfo({ profile }: { profile: any }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 pt-2 text-sm">
+        <div className="flex gap-4 pt-2 text-sm">
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-muted-foreground" />
             <span className="font-medium">{profile.followers}</span>

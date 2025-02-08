@@ -43,6 +43,13 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getGithubUser } from "@/lib/github";
 import { ProfileInfo } from "@/components/profile/info";
+import {
+  TechStack,
+  TechStackError,
+  TechStackSkeleton,
+} from "@/components/profile/tech-stack";
+import { Suspense } from "react";
+import { getTechStack } from "@/lib/tech-stack";
 
 interface PageProps {
   params: {
@@ -67,6 +74,19 @@ export async function generateMetadata({
   }
 }
 
+async function TechStackSection({ username }: { username: string }) {
+  try {
+    const data = await getTechStack(username);
+    return <TechStack username={username} initialData={data} />;
+  } catch (error) {
+    return (
+      <TechStackError
+        error={error instanceof Error ? error : new Error("Unknown error")}
+      />
+    );
+  }
+}
+
 export default async function MemberProfile({ params }: PageProps) {
   let user;
 
@@ -82,6 +102,9 @@ export default async function MemberProfile({ params }: PageProps) {
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-4 sm:py-0 md:gap-4 lg:grid-cols-3 xl:grid-cols-3">
           <div className="grid auto-rows-max items-start gap-4 md:gap-4 lg:col-span-2">
             <ProfileInfo profile={user} />
+            <Suspense fallback={<TechStackSkeleton />}>
+              <TechStackSection username={user.login} />
+            </Suspense>
             <Card x-chunk="dashboard-05-chunk-3">
               <CardHeader className="px-7">
                 <CardTitle>Orders</CardTitle>
