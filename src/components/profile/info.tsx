@@ -7,10 +7,12 @@ import {
   Users,
   GitFork,
   Bookmark,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistance } from "date-fns";
+import Link from "next/link";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function ProfileInfo({ profile }: { profile: any }) {
@@ -63,7 +65,7 @@ export function ProfileInfo({ profile }: { profile: any }) {
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-4 w-4" />
             <span>
-              Joined{" "}
+              Joined GitHub{" "}
               {formatDistance(new Date(profile.created_at), new Date(), {
                 addSuffix: true,
               })}
@@ -85,7 +87,16 @@ export function ProfileInfo({ profile }: { profile: any }) {
           <div className="flex items-center gap-2">
             <GitFork className="h-4 w-4 text-muted-foreground" />
             <span className="font-medium">{profile.public_repos}</span>
-            <span className="text-muted-foreground">repositories</span>
+
+            <Link
+              href={`https://github.com/${profile.login}?tab=repositories`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="text-muted-foreground hover:text-foreground">
+                repositories <ExternalLink size={16} className="inline" />
+              </span>
+            </Link>
           </div>
         </div>
       </div>
