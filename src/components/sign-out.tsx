@@ -15,7 +15,7 @@ export function Signout() {
 
   return (
     <DropdownMenuItem>
-      <span onClick={handleSignOut}>
+      <span onClick={handleSignOut} className="cursor-pointer">
         <LogOut size={16} className="display: inline -ml-1 mr-2" />
 
         {isLoading ? "Loading..." : "Sign out"}

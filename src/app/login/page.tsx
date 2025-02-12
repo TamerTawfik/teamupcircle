@@ -22,7 +22,7 @@ export default function SignIn() {
         <CardContent>
           <Button
             className="w-full"
-            onClick={() => signIn("github", { callbackUrl: "/" })}
+            onClick={() => signIn("github", { callbackUrl: "/members" })}
           >
             <Github className="mr-2 h-4 w-4" />
             Continue with GitHub

@@ -5,7 +5,7 @@ import {
   Bell,
   ChevronsUpDown,
   CreditCard,
-  Sparkles,
+  User2,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -24,6 +24,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Signout } from "@/components/sign-out";
 
@@ -84,8 +85,8 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
+                <User2 />
+                <Link href={`/${session?.user.username}`}>View Profile</Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
