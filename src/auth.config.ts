@@ -12,6 +12,7 @@ export default {
                   name: profile.name || profile.login,
                   email: profile.email,
                   image: profile.avatar_url,
+                  location: profile.location,
                   username: profile.login,
                   role: "MEMBER",
                 };

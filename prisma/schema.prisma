@@ -27,18 +27,52 @@ model Account {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    passwordHash  String?
-    image         String?
-    username      String?   @unique
-    accounts      Account[]
-    role          Role      @default(MEMBER)
+    id                  String              @id @default(cuid())
+    name                String?
+    email               String?             @unique
+    emailVerified       DateTime?
+    passwordHash        String?
+    image               String?
+    username            String?             @unique
+    location            String?
+    accounts            Account[]
+    collaborationStyles CollaborationStyle?
+    role                Role                @default(MEMBER)
+}
+
+// Collaboration style preferences
+model CollaborationStyle {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    techStack          String[] // Preferred technology stack
+    availabilityStatus AvailabilityStatus @default(AVAILABLE)
+    hoursPerWeek       Int?
+    teamSize           TeamSize           @default(Less_Than_5)
+    teamRoles          String[]
+    projectDomains     String[] // Array of preferred project domains
+    // Relations
+    userId             String             @unique
+    user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
 }
 
 enum Role {
     ADMIN
     MEMBER
+}
+
+enum AvailabilityStatus {
+    AVAILABLE
+    NOT_AVAILABLE
+}
+
+enum TeamSize {
+    Open_TO_ANY
+    Less_Than_5
+    Less_Than_10
+    Less_Than_20
+    More_Than_20
 }
