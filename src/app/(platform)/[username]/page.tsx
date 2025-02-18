@@ -60,7 +60,7 @@ async function TechStackSection({ username }: { username: string }) {
 }
 
 export default async function MemberProfile({ params }: PageProps) {
-  const userProfile = await getCurrentUser();
+  const userProfile = await getCurrentUser({ username: params.username });
 
   let user;
 

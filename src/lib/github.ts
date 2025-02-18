@@ -13,6 +13,9 @@ export const githubUserSchema = z.object({
   html_url: z.string().url(),
 });
 
+const GITHUB_API_URL = "https://api.github.com";
+
+
 export type GithubUser = z.infer<typeof githubUserSchema>;
 
 export async function getGithubUser(username: string): Promise<GithubUser> {
@@ -35,4 +38,30 @@ export async function getGithubUser(username: string): Promise<GithubUser> {
 
   const data = await res.json();
   return githubUserSchema.parse(data);
+}
+
+
+export async function getGitHubUserData(username: string) {
+  try {
+    const response = await fetch(`${GITHUB_API_URL}/users/${username}`, {
+      headers: {
+        "Accept": "application/vnd.github.v3+json",
+        ...(process.env.GITHUB_TOKEN && {
+          "Authorization": `token ${process.env.GITHUB_TOKEN}`
+        }),
+      },
+      next: {
+        revalidate: 3600, // Cache for 1 hour
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`GitHub API error: ${response.statusText}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching GitHub data:", error);
+    return null;
+  }
 }
