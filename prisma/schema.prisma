@@ -35,9 +35,21 @@ model User {
     image               String?
     username            String?             @unique
     location            String?
+    role                Role                @default(MEMBER)
     accounts            Account[]
     collaborationStyles CollaborationStyle?
-    role                Role                @default(MEMBER)
+    // Connection related fields
+    sentConnections     Connection[]        @relation("SentConnections")
+    receivedConnections Connection[]        @relation("ReceivedConnections")
+    notifications       Notification[]
+    privacySettings     PrivacySettings?
+
+    // Connection request rate limiting
+    lastConnectionRequest  DateTime?
+    connectionRequestCount Int       @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 // Collaboration style preferences
@@ -59,6 +71,47 @@ model CollaborationStyle {
     @@index([userId])
 }
 
+model Connection {
+    id         String           @id @default(cuid())
+    senderId   String
+    receiverId String
+    status     ConnectionStatus @default(PENDING)
+    createdAt  DateTime         @default(now())
+    updatedAt  DateTime         @updatedAt
+
+    sender   User @relation("SentConnections", fields: [senderId], references: [id], onDelete: Cascade)
+    receiver User @relation("ReceivedConnections", fields: [receiverId], references: [id], onDelete: Cascade)
+
+    @@unique([senderId, receiverId])
+    @@index([senderId])
+    @@index([receiverId])
+}
+
+model Notification {
+    id        String           @id @default(cuid())
+    userId    String
+    type      NotificationType
+    message   String
+    read      Boolean          @default(false)
+    createdAt DateTime         @default(now())
+    metadata  Json? // For storing additional data like connection IDs
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+}
+
+model PrivacySettings {
+    id                       String               @id @default(cuid())
+    userId                   String               @unique
+    connectionRequests       ConnectionPrivacy    @default(EVERYONE)
+    connectionListVisibility ConnectionVisibility @default(CONNECTIONS)
+    autoDeclineRequests      Boolean              @default(false)
+    notificationPreferences  Json // Store notification preferences as JSON
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 enum Role {
     ADMIN
     MEMBER
@@ -75,4 +128,30 @@ enum TeamSize {
     Less_Than_10
     Less_Than_20
     More_Than_20
+}
+
+enum ConnectionStatus {
+    PENDING
+    ACCEPTED
+    DECLINED
+    REMOVED
+}
+
+enum ConnectionPrivacy {
+    EVERYONE
+    SECOND_DEGREE
+    NOBODY
+}
+
+enum ConnectionVisibility {
+    EVERYONE
+    CONNECTIONS
+    NOBODY
+}
+
+enum NotificationType {
+    CONNECTION_REQUEST
+    CONNECTION_ACCEPTED
+    CONNECTION_DECLINED
+    CONNECTION_REMOVED
 }

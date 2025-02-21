@@ -7,7 +7,7 @@ export default async function ProfilesPage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <div className="flex flex-col sm:gap-4 sm:py-4 px-4">
-        <div className="">
+        <div>
           <h1 className="text-xl font-bold mb-8">Developer Profiles</h1>
           <ProfileGrid profiles={profiles} />
         </div>

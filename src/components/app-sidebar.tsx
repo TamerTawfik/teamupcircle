@@ -45,7 +45,7 @@ const data = {
     },
     {
       title: "Connections",
-      url: "#",
+      url: "/connections",
       icon: Bot,
     },
     {

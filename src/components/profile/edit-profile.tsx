@@ -91,6 +91,7 @@ export function EditProfileDialog({
 
       if (result.error) {
         toast({
+          variant: "destructive",
           title: "Update Error",
           description: result.error as string,
         });
@@ -105,6 +106,7 @@ export function EditProfileDialog({
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast({
+        variant: "destructive",
         title: "Update Error",
         description: "Something went wrong. Please try again.",
       });
@@ -146,6 +148,7 @@ export function EditProfileDialog({
                           maxSelected={12}
                           onMaxSelected={(maxLimit) => {
                             toast({
+                              variant: "destructive",
                               title: `You have reached max selected: ${maxLimit}`,
                             });
                           }}
@@ -188,6 +191,7 @@ export function EditProfileDialog({
                           maxSelected={3}
                           onMaxSelected={(maxLimit) => {
                             toast({
+                              variant: "destructive",
                               title: `You have reached max selected: ${maxLimit}`,
                             });
                           }}
@@ -230,6 +234,7 @@ export function EditProfileDialog({
                           maxSelected={12}
                           onMaxSelected={(maxLimit) => {
                             toast({
+                              variant: "destructive",
                               title: `You have reached max selected: ${maxLimit}`,
                             });
                           }}

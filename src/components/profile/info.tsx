@@ -1,7 +1,4 @@
-"use client";
-
 import {
-  UserPlus,
   Calendar,
   MapPin,
   Users,
@@ -13,9 +10,23 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistance } from "date-fns";
 import Link from "next/link";
+import { ConnectButton } from "@/components/connect-button";
+import { auth } from "@/auth";
+import { Connection } from "@prisma/client";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function ProfileInfo({ profile }: { profile: any }) {
+interface ProfileInfoProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  profile: any;
+  targetUserId?: string;
+  connection: Connection | null;
+}
+
+export async function ProfileInfo({
+  profile,
+  targetUserId,
+  connection,
+}: ProfileInfoProps) {
+  const session = await auth();
   return (
     <div className="flex flex-col md:flex-row items-start gap-6 p-6 mb-6">
       <div className="relative">
@@ -43,10 +54,12 @@ export function ProfileInfo({ profile }: { profile: any }) {
               <Bookmark className="mr-2 h-4 w-4" />
               Bookmark
             </Button>
-            <Button size="sm">
-              <UserPlus className="mr-2 h-4 w-4" />
-              Connect
-            </Button>
+            {targetUserId !== session?.user.id && (
+              <ConnectButton
+                targetUserId={targetUserId || ""}
+                connection={connection}
+              />
+            )}
           </div>
         </div>
         <div className="py-4">

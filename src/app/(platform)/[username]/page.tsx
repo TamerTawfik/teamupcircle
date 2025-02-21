@@ -22,6 +22,7 @@ import { Suspense } from "react";
 import { getCurrentUser } from "@/app/actions/auth";
 import { getTechStack } from "@/lib/tech-stack";
 import { TeamupStyle } from "@/components/profile/teamup-style";
+import { getConnectionStatus } from "@/app/actions/connections";
 
 interface PageProps {
   params: {
@@ -61,6 +62,7 @@ async function TechStackSection({ username }: { username: string }) {
 
 export default async function MemberProfile({ params }: PageProps) {
   const userProfile = await getCurrentUser({ username: params.username });
+  const connection = await getConnectionStatus(params.username);
 
   let user;
 
@@ -75,7 +77,11 @@ export default async function MemberProfile({ params }: PageProps) {
       <div className="flex flex-col sm:gap-4 sm:py-4">
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-4 sm:py-0 md:gap-4 lg:grid-cols-3 xl:grid-cols-3">
           <div className="grid auto-rows-max items-start gap-4 md:gap-4 lg:col-span-2">
-            <ProfileInfo profile={user} />
+            <ProfileInfo
+              profile={user}
+              targetUserId={userProfile?.id}
+              connection={connection}
+            />
             <Suspense fallback={<TechStackSkeleton />}>
               <TechStackSection username={user.login} />
             </Suspense>
