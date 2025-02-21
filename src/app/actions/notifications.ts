@@ -1,12 +1,14 @@
-import { NextResponse } from "next/server";
+"use server";
+
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
-export async function GET() {
+export async function getNotifications() {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return { error: "Unauthorized" };
     }
 
     const notifications = await prisma.notification.findMany({
@@ -19,21 +21,19 @@ export async function GET() {
       take: 50,
     });
 
-    return NextResponse.json(notifications);
+    return { notifications };
   } catch (error) {
     console.error("Error fetching notifications:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return { error: "Failed to fetch notifications" };
   }
 }
 
-export async function PATCH(req: Request) {
+export async function markNotificationsAsRead(notificationIds: string[]) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return { error: "Unauthorized" };
     }
-
-    const { notificationIds } = await req.json();
 
     await prisma.notification.updateMany({
       where: {
@@ -47,9 +47,10 @@ export async function PATCH(req: Request) {
       },
     });
 
-    return new NextResponse("OK");
+    revalidatePath("/");
+    return { success: true };
   } catch (error) {
     console.error("Error marking notifications as read:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return { error: "Failed to update notifications" };
   }
 }

@@ -19,13 +19,18 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
 import { NotificationType } from "@prisma/client";
+import {
+  getNotifications,
+  markNotificationsAsRead,
+} from "@/app/actions/notifications";
+import { toast } from "sonner";
 
 interface Notification {
   id: string;
   type: NotificationType;
   message: string;
   read: boolean;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export function NotificationsDropdown() {
@@ -39,26 +44,38 @@ export function NotificationsDropdown() {
 
   const fetchNotifications = async () => {
     try {
-      const response = await fetch("/api/notifications");
-      if (response.ok) {
-        const data = await response.json();
-        setNotifications(data);
-        setUnreadCount(data.filter((n: Notification) => !n.read).length);
+      const result = await getNotifications();
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
+      if (result.notifications) {
+        setNotifications(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          result.notifications.map((notification: any) => ({
+            ...notification,
+            createdAt: new Date(notification.createdAt).toISOString(),
+          }))
+        );
+      }
+      setUnreadCount(
+        result.notifications
+          ? result.notifications.filter((n: Notification) => !n.read).length
+          : 0
+      );
     } catch (error) {
       console.error("Error fetching notifications:", error);
+      toast.error("Failed to fetch notifications");
     }
   };
 
   const markAsRead = async (notificationIds: string[]) => {
     try {
-      await fetch("/api/notifications", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ notificationIds }),
-      });
+      const result = await markNotificationsAsRead(notificationIds);
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
 
       setNotifications(
         notifications.map((notification) => ({
@@ -70,6 +87,7 @@ export function NotificationsDropdown() {
       setUnreadCount(Math.max(0, unreadCount - notificationIds.length));
     } catch (error) {
       console.error("Error marking notifications as read:", error);
+      toast.error("Failed to update notifications");
     }
   };
 
@@ -91,7 +109,7 @@ export function NotificationsDropdown() {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="outline" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
@@ -107,7 +125,7 @@ export function NotificationsDropdown() {
               <h2 className="text-sm font-semibold">Notifications</h2>
               {unreadCount > 0 && (
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   className="text-xs"
                   onClick={() =>

@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { bulkRespondToRequests } from "@/app/actions/connections";
 import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 
 interface PendingRequestsProps {
   sent: Array<
@@ -114,9 +115,11 @@ export function PendingRequests({ sent, received }: PendingRequestsProps) {
                       "U"}
                   </AvatarFallback>
                 </Avatar>
-                <span className="flex-1 font-medium">
-                  {request.sender.name || request.sender.username}
-                </span>
+                <Link href={`/${request.sender.username}`}>
+                  <span className="flex-1 font-medium">
+                    {request.sender.name || request.sender.username}
+                  </span>
+                </Link>
               </div>
             ))}
           </CardContent>
@@ -145,9 +148,11 @@ export function PendingRequests({ sent, received }: PendingRequestsProps) {
                       "U"}
                   </AvatarFallback>
                 </Avatar>
-                <span className="flex-1 font-medium">
-                  {request.receiver.name || request.receiver.username}
-                </span>
+                <Link href={`/${request.receiver.username}`}>
+                  <span className="flex-1 font-medium">
+                    {request.receiver.name || request.receiver.username}
+                  </span>
+                </Link>
               </div>
             ))}
           </CardContent>

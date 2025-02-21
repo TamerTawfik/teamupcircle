@@ -129,7 +129,6 @@ export async function sendConnectionRequest(targetUserId: string) {
     });
 
     revalidatePath("/connections");
-    // revalidatePath(`/profile/${targetUserId}`);
     return { success: true };
   } catch (error) {
     console.error("Error sending connection request:", error);
@@ -175,7 +174,6 @@ export async function respondToConnectionRequest(connectionId: string, accept: b
     });
 
     revalidatePath("/connections");
-    // revalidatePath(`/profile/${connection.senderId}`);
     return { success: true };
   } catch (error) {
     console.error("Error responding to connection request:", error);
@@ -223,7 +221,6 @@ export async function removeConnection(connectionId: string) {
     });
 
     revalidatePath("/connections");
-    // revalidatePath(`/profile/${otherUserId}`);
     return { success: true };
   } catch (error) {
     console.error("Error removing connection:", error);
