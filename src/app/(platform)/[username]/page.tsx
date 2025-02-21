@@ -23,6 +23,7 @@ import { getCurrentUser } from "@/app/actions/auth";
 import { getTechStack } from "@/lib/tech-stack";
 import { TeamupStyle } from "@/components/profile/teamup-style";
 import { getConnectionStatus } from "@/app/actions/connections";
+import { auth } from "@/auth";
 
 interface PageProps {
   params: {
@@ -62,6 +63,8 @@ async function TechStackSection({ username }: { username: string }) {
 
 export default async function MemberProfile({ params }: PageProps) {
   const userProfile = await getCurrentUser({ username: params.username });
+  const session = await auth();
+  const isProfileOwner = session?.user?.id === userProfile?.id;
   const connection = await getConnectionStatus(params.username);
 
   let user;
@@ -102,7 +105,9 @@ export default async function MemberProfile({ params }: PageProps) {
               </CardContent>
             </Card>
           </div>
-          {userProfile && <TeamupStyle user={userProfile} />}
+          {userProfile && (
+            <TeamupStyle user={userProfile} isProfileOwner={isProfileOwner} />
+          )}
         </main>
       </div>
     </div>

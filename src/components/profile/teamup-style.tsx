@@ -21,7 +21,12 @@ import techStack from "@/data/tech.json";
 import projectDomains from "@/data/project-domains.json";
 import roles from "@/data/roles.json";
 
-export function TeamupStyle({ user }: { user: ProfileWithCollaboration }) {
+interface PageProps {
+  user: ProfileWithCollaboration;
+  isProfileOwner: boolean;
+}
+
+export function TeamupStyle({ user, isProfileOwner }: PageProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   return (
@@ -53,17 +58,19 @@ export function TeamupStyle({ user }: { user: ProfileWithCollaboration }) {
             </CardDescription>
           </div>
           <div className="ml-auto flex items-center gap-1">
-            <Button
-              onClick={() => setIsEditing(true)}
-              size="sm"
-              variant="outline"
-              className="h-8 gap-1"
-            >
-              <Pencil className="h-3 w-3" />
-              <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                Edit Profile
-              </span>
-            </Button>
+            {isProfileOwner && (
+              <Button
+                onClick={() => setIsEditing(true)}
+                size="sm"
+                variant="outline"
+                className="h-8 gap-1"
+              >
+                <Pencil className="h-3 w-3" />
+                <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
+                  Edit Profile
+                </span>
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent className="p-6 text-sm">
