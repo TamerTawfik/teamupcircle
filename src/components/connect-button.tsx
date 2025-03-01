@@ -17,6 +17,7 @@ import {
 import { Connection, ConnectionStatus } from "@prisma/client";
 import { MoreHorizontal, UserPlus, UserMinus, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface ConnectButtonProps {
   targetUserId: string;
@@ -189,6 +190,10 @@ export function ConnectButton({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+              <UserMinus className="mr-2 h-4 w-4" />
+              <Link href={`/messages/${targetUserId}`}>Message</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={handleRemove}
               className="text-destructive focus:text-destructive"

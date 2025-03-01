@@ -48,6 +48,10 @@ model User {
     lastConnectionRequest  DateTime?
     connectionRequestCount Int       @default(0)
 
+    // Message related fields
+    senderMessages    Message[] @relation("sender")
+    recipientMessages Message[] @relation("recipient")
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
@@ -110,6 +114,19 @@ model PrivacySettings {
     notificationPreferences  Json // Store notification preferences as JSON
 
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+    id               String    @id @default(cuid())
+    text             String
+    created          DateTime  @default(now())
+    senderId         String?
+    recipientId      String?
+    sender           User?     @relation("sender", fields: [senderId], references: [id], onDelete: SetNull)
+    recipient        User?     @relation("recipient", fields: [recipientId], references: [id], onDelete: SetNull)
+    dateRead         DateTime?
+    senderDeleted    Boolean   @default(false)
+    recipientDeleted Boolean   @default(false)
 }
 
 enum Role {

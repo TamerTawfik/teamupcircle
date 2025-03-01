@@ -50,7 +50,7 @@ const data = {
     },
     {
       title: "Messages",
-      url: "#",
+      url: "/messages",
       icon: Settings2,
     },
     {

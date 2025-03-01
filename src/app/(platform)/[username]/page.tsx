@@ -35,7 +35,8 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   try {
-    const user = await getGithubUser(params.username);
+    const { username } = await params;
+    const user = await getGithubUser(username);
     return {
       title: `${user.name || user.login} - Profile`,
       description: user.bio || `GitHub profile of ${user.login}`,
@@ -62,15 +63,16 @@ async function TechStackSection({ username }: { username: string }) {
 }
 
 export default async function MemberProfile({ params }: PageProps) {
-  const userProfile = await getCurrentUser({ username: params.username });
+  const { username } = await params;
+  const userProfile = await getCurrentUser({ username: username });
   const session = await auth();
   const isProfileOwner = session?.user?.id === userProfile?.id;
-  const connection = await getConnectionStatus(params.username);
+  const connection = await getConnectionStatus(username);
 
   let user;
 
   try {
-    user = await getGithubUser(params.username);
+    user = await getGithubUser(username);
   } catch {
     notFound();
   }

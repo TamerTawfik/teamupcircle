@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+import { Spinner } from "@/components/spinner";
 
 export default function Loading() {
   const containerStyle: React.CSSProperties = {
@@ -10,7 +10,7 @@ export default function Loading() {
 
   return (
     <div style={containerStyle}>
-      <Loader2 className="mx-auto my-3 animate-spin" />
+      <Spinner />
     </div>
   );
 }
