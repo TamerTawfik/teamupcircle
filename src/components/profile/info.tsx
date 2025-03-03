@@ -1,12 +1,4 @@
-import {
-  Calendar,
-  MapPin,
-  Users,
-  GitFork,
-  Bookmark,
-  ExternalLink,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Calendar, MapPin, Users, GitFork, ExternalLink } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistance } from "date-fns";
 import Link from "next/link";
@@ -50,10 +42,6 @@ export async function ProfileInfo({
             )}
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Bookmark className="mr-2 h-4 w-4" />
-              Bookmark
-            </Button>
             {targetUserId !== session?.user.id && (
               <ConnectButton
                 targetUserId={targetUserId || ""}

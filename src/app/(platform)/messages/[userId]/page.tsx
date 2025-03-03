@@ -1,7 +1,7 @@
-import { MessageLayout } from "../message-layout";
-import { MessageThread } from "../message-thread";
+import { MessageLayout } from "@/components/messages/message-layout";
+import { MessageThread } from "@/components/messages/message-thread";
+import { MessageSkeleton } from "@/components/messages/message-skeleton";
 import { Suspense } from "react";
-import { MessageSkeleton } from "../message-skeleton";
 
 interface MessagePageProps {
   params: {

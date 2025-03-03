@@ -15,7 +15,7 @@ import {
   removeConnection,
 } from "@/app/actions/connections";
 import { Connection, ConnectionStatus } from "@prisma/client";
-import { MoreHorizontal, UserPlus, UserMinus, Clock } from "lucide-react";
+import { MoreHorizontal, UserPlus, UserMinus, Clock, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -173,36 +173,38 @@ export function ConnectButton({
 
     case ConnectionStatus.ACCEPTED:
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              size="sm"
-              variant="secondary"
-              className={cn(
-                "w-full sm:w-auto",
-                isLoading && "cursor-not-allowed opacity-50"
-              )}
-              disabled={isLoading}
-            >
-              <UserPlus className="mr-2 h-4 w-4" />
-              Connected
-              <MoreHorizontal className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <UserMinus className="mr-2 h-4 w-4" />
-              <Link href={`/messages/${targetUserId}`}>Message</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleRemove}
-              className="text-destructive focus:text-destructive"
-            >
-              <UserMinus className="mr-2 h-4 w-4" />
-              Remove Connection
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <Button size="sm" className="w-full sm:w-auto">
+            <Mail className="mr-2 h-4 w-4" />
+            <Link href={`/messages/${targetUserId}`}>Message</Link>
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="sm"
+                variant="secondary"
+                className={cn(
+                  "w-full sm:w-auto",
+                  isLoading && "cursor-not-allowed opacity-50"
+                )}
+                disabled={isLoading}
+              >
+                <UserPlus className="mr-2 h-4 w-4" />
+                Connected
+                <MoreHorizontal className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={handleRemove}
+                className="text-destructive focus:text-destructive"
+              >
+                <UserMinus className="mr-2 h-4 w-4" />
+                Remove Connection
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
       );
 
     default:

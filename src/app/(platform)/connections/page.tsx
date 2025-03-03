@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { getPendingRequests, getConnections } from "@/app/actions/connections";
 import { ConnectionsList } from "@/components/connections-list";
 import { PendingRequests } from "@/components/pending-requests";
-import { ConnectionsSearch } from "@/components/connections-search";
 import { Skeleton } from "@/components/ui/skeleton";
 import { auth } from "@/auth";
 
@@ -23,7 +22,6 @@ export default async function ConnectionsPage() {
 
           <div className="grid gap-8 md:grid-cols-[300px,1fr]">
             <aside className="space-y-6">
-              <ConnectionsSearch />
               <Suspense fallback={<Skeleton className="h-[200px]" />}>
                 <PendingRequests
                   sent={pendingRequests.sent}

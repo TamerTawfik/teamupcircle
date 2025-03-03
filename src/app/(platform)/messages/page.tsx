@@ -1,4 +1,4 @@
-import { MessageLayout } from "./message-layout";
+import { MessageLayout } from "@/components/messages/message-layout";
 
 export default function MessagesPage() {
   return (
