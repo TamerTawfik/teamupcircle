@@ -52,6 +52,9 @@ model User {
     senderMessages    Message[] @relation("sender")
     recipientMessages Message[] @relation("recipient")
 
+    // Feedback related fields
+    feedbacks Feedback[]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
@@ -129,6 +132,21 @@ model Message {
     recipientDeleted Boolean   @default(false)
 }
 
+model Feedback {
+    id        String         @id @default(cuid())
+    content   String
+    userId    String?
+    userEmail String?
+    userAgent String?
+    ipAddress String?
+    pageUrl   String?
+    status    FeedbackStatus @default(PENDING)
+    createdAt DateTime       @default(now())
+    updatedAt DateTime       @updatedAt
+
+    user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
 enum Role {
     ADMIN
     MEMBER
@@ -171,4 +189,11 @@ enum NotificationType {
     CONNECTION_ACCEPTED
     CONNECTION_DECLINED
     CONNECTION_REMOVED
+}
+
+enum FeedbackStatus {
+    PENDING
+    REVIEWED
+    RESOLVED
+    REJECTED
 }
