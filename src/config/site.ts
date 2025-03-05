@@ -1,6 +1,6 @@
 export const siteConfig = {
-    name: "Collab",
-    url: "https://collab.com",
+    name: "Teamup Circle",
+    url: "https://teamupcircle.com",
     ogImage: "",
     description:
       "online platform for developers to team up on open-source projects.",

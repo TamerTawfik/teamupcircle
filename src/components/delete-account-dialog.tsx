@@ -72,17 +72,19 @@ export function DeleteAccountDialog() {
                 This action cannot be undone. This will permanently delete your
                 account and remove all associated data from our servers.
               </p>
-              <p className="font-medium">
-                The following data will be permanently deleted:
-              </p>
-              <ul className="list-disc list-inside space-y-1">
-                <li>Your profile information</li>
-                <li>All your messages and conversations</li>
-                <li>Your connections and connection requests</li>
-                <li>Your collaboration preferences</li>
-                <li>Your privacy settings</li>
-                <li>All notifications</li>
-              </ul>
+              <div className="space-y-2">
+                <p className="font-medium">
+                  The following data will be permanently deleted:
+                </p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Your profile information</li>
+                  <li>All your messages and conversations</li>
+                  <li>Your connections and connection requests</li>
+                  <li>Your collaboration preferences</li>
+                  <li>Your privacy settings</li>
+                  <li>All notifications</li>
+                </ul>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
