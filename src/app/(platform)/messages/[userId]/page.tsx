@@ -9,11 +9,13 @@ interface MessagePageProps {
   };
 }
 
-export default function MessagePage({ params }: MessagePageProps) {
+export default async function MessagePage({ params }: MessagePageProps) {
+  const { userId } = await params;
+
   return (
     <MessageLayout>
       <Suspense fallback={<MessageSkeleton />}>
-        <MessageThread userId={params.userId} />
+        <MessageThread userId={userId} />
       </Suspense>
     </MessageLayout>
   );

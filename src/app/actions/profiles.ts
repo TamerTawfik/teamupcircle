@@ -4,16 +4,23 @@ import { prisma } from "@/lib/prisma";
 import { getGitHubUserData } from "@/lib/github";
 import { cache } from "react";
 import { ProfileWithGitHub } from "@/types/profile";
+import { auth } from "@/auth";
 
 export const getProfiles = cache(async () => {
+const session = await auth();
   // Get all users with their collaboration styles
   const users = await prisma.user.findMany({
+    where: {
+      NOT: {
+        id: session?.user?.id
+      }
+    },
     include: {
       collaborationStyles: true,
     },
-    // orderBy: {
-    //   createdAt: "desc",
-    // },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   // Only fetch GitHub data for users with missing information

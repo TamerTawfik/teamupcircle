@@ -69,6 +69,10 @@ export default async function MemberProfile({ params }: PageProps) {
   const isProfileOwner = session?.user?.id === userProfile?.id;
   const connection = await getConnectionStatus(username);
 
+  if (!userProfile) {
+    return notFound();
+  }
+
   let user;
 
   try {
