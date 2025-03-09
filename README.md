@@ -1,7 +1,5 @@
 # Teamup Circle - A Modern Collaboration Platform
 
-![Teamup Circle Platform](https://via.placeholder.com/800x400?text=Teamup+Circle+Platform)
-
 ## Overview
 
 Teamup Circle is a comprehensive collaboration platform designed to connect users based on their preferences and expertise. Built with modern web technologies, Teamup Circle enables seamless communication, project coordination, and feedback exchange between users in a secure and intuitive environment.
@@ -112,7 +110,7 @@ teamupcircle/
 
 ## Deployment
 
-The easiest way to deploy your Collab application is to use the [Vercel Platform](https://vercel.com/new).
+The easiest way to deploy the application is to use the [Vercel Platform](https://vercel.com/new).
 
 1. Push your code to a GitHub repository.
 2. Import the project to Vercel.
@@ -128,10 +126,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
 
