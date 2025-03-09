@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Inbox } from "lucide-react";
 
 import {
@@ -8,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getGithubUser } from "@/lib/github";
 import { ProfileInfo } from "@/components/profile/info";
@@ -29,9 +31,11 @@ interface PageProps {
   };
 }
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   try {
-    const { username } = params;
+    const { username } = await params;
     const user = await getGithubUser(username);
     return {
       title: `${user.name || user.login} - Profile`,
@@ -59,15 +63,11 @@ async function TechStackSection({ username }: { username: string }) {
 }
 
 export default async function MemberProfile({ params }: PageProps) {
-  const { username } = params;
+  const { username } = await params;
   const userProfile = await getCurrentUser({ username: username });
   const session = await auth();
   const isProfileOwner = session?.user?.id === userProfile?.id;
   const connection = await getConnectionStatus(username);
-
-  if (!userProfile) {
-    return notFound();
-  }
 
   let user;
 
