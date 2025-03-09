@@ -39,9 +39,9 @@ export function TeamupStyle({ user, isProfileOwner }: PageProps) {
             </CardTitle>
             <CardDescription className="text-sm">
               <div>
-                <label className="text-xs font-normal text-muted-foreground">
-                  Availability Status
-                </label>
+                {/* <label className="text-xs font-normal text-muted-foreground">
+                  Status
+                </label> */}
                 <Badge
                   variant={
                     user.collaborationStyles?.availabilityStatus === "AVAILABLE"

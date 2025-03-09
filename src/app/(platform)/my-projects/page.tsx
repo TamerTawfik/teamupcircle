@@ -7,8 +7,8 @@ export default function MyProjectsPage() {
       <div className="text-center max-w-sm mx-auto flex flex-col items-center justify-center">
         <h2 className="text-xl font-medium mb-2">Coming Soon</h2>
         <p className="text-sm text-[#878787] mb-6">
-          Create an open source project to collaborate with others, share your
-          skills, and contribute to the community.
+          Create projects to collaborate with others, share your skills, and
+          contribute to the community.
         </p>
 
         <Button disabled className="text-xs">

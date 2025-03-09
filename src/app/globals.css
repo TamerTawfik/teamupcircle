@@ -97,3 +97,99 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .container {
+    @apply max-w-6xl mx-auto px-6 md:px-10 lg:px-14 w-full;
+  }
+
+  .pulled {
+    @apply -mx-2 md:-mx-6 lg:-mx-10 xl:-mx-20;
+  }
+
+  .row {
+    @apply flex flex-row;
+  }
+
+  .col {
+    @apply flex flex-col;
+  }
+
+  .center-center {
+    @apply flex items-center justify-center text-center;
+  }
+}
+
+
+.animated-iframe-gradient {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+}
+
+.animated-iframe-gradient:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1600px;
+  height: 1600px;
+  background: linear-gradient(250deg, hsl(var(--foreground)/0.9), transparent);
+  
+  animation: GradientRotate 8s linear infinite;
+}
+@keyframes GradientRotate {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.line-before {
+  position: relative;
+  padding: 16px;
+}
+.line-before:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: calc(4px*-32);
+  bottom: calc(4px*-32);
+  left: 0;
+  width: 1px;
+  background: hsl(var(--foreground)/0.1);
+}
+.line-after {
+  position: relative;
+  padding: 16px;
+}
+.line-after:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: calc(4px*-32);
+  bottom: calc(4px*-32);
+  right: 0;
+  width: 1px;
+  background: hsl(var(--foreground)/0.1);
+}
+
+.animate-fade-up {
+  animation: animateFadeUp 0.5s ease-in-out;
+  animation-fill-mode: both; 
+}
+
+@keyframes animateFadeUp {
+  0% { transform: translateY(0.5rem); scale: 0.95; }
+  100% { transform: translateY(0); scale: 1; }
+}
+
+.animate-fade-down {
+  animation: animateFadeDown 0.5s ease-in-out;
+  animation-fill-mode: both;
+}
+
+@keyframes animateFadeDown {
+  0% { transform: translateY(-1rem); }
+  100% { transform: translateY(0); }
+}

@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+export async function getGithubRepoInfo() {
+  try {
+    const res = await fetch(
+      'https://api.github.com/repos/TamerTawfik/teamupcircle',
+    );
+    return res.json();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
+    return null;
+  }
+}
+
 export const githubUserSchema = z.object({
   login: z.string(),
   name: z.string().nullable(),
