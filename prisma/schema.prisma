@@ -55,6 +55,10 @@ model User {
     // Feedback related fields
     feedbacks Feedback[]
 
+    status      Status    @default(ACTIVE)
+    blockedAt   DateTime?
+    blockReason String?
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
@@ -196,4 +200,9 @@ enum FeedbackStatus {
     REVIEWED
     RESOLVED
     REJECTED
+}
+
+enum Status {
+    ACTIVE
+    BLOCKED
 }
