@@ -27,16 +27,20 @@ model Account {
 }
 
 model User {
-    id                  String              @id @default(cuid())
-    name                String?
-    email               String?             @unique
-    emailVerified       DateTime?
-    passwordHash        String?
-    image               String?
-    username            String?             @unique
-    location            String?
-    role                Role                @default(MEMBER)
-    accounts            Account[]
+    id            String    @id @default(cuid())
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    passwordHash  String?
+    image         String?
+    username      String?   @unique
+    location      String?
+    githubId      String?   @unique // GitHub profile ID - Custom field
+
+    role     Role      @default(MEMBER)
+    accounts Account[]
+    sessions Session[]
+
     collaborationStyles CollaborationStyle?
     // Connection related fields
     sentConnections     Connection[]        @relation("SentConnections")
@@ -61,6 +65,24 @@ model User {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
 }
 
 // Collaboration style preferences

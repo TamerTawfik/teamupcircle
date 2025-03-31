@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { GalleryVerticalEnd } from "lucide-react";
+import { Logo } from "@/components/logo";
 import {
   Card,
   CardHeader,
@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import { siteConfig } from "@/config/site";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -19,12 +20,15 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col items-center gap-2">
-          <a href="#" className="flex flex-col items-center gap-2 font-medium">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md">
-              <GalleryVerticalEnd className="size-6" />
+          <Link
+            href="/"
+            className="flex flex-col items-center gap-2 font-medium"
+          >
+            <div className="flex h-16 w-16 items-center justify-center rounded-md">
+              <Logo className="size-16" />
             </div>
             <span className="sr-only">{siteConfig.name}.</span>
-          </a>
+          </Link>
           <h1 className="text-xl font-bold">Welcome to {siteConfig.name}.</h1>
         </div>
         <Card className="w-[400px]">
