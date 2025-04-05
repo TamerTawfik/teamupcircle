@@ -25,10 +25,11 @@ export async function ProfileInfo({
         <Avatar className="h-32 w-32">
           <AvatarImage src={profile.avatar_url} alt={profile.login} />
           <AvatarFallback>
-            {profile.bio
-              .split(" ")
-              .map((word: never[]) => word[0])
-              .join("")}
+            {profile.bio &&
+              profile.bio
+                .split(" ")
+                .map((word: never[]) => word[0])
+                .join("")}
           </AvatarFallback>
         </Avatar>
       </div>

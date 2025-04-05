@@ -84,7 +84,9 @@ export function ProfileCard({ profile }: { profile: ProfileWithGitHub }) {
         <span className="pr-1">Updated </span>
         <span>
           {formatDistance(
-            new Date(profile.collaborationStyles?.updatedAt || Date.now()),
+            new Date(
+              profile.collaborationStyles?.updatedAt || profile.createdAt
+            ),
             new Date(),
             {
               addSuffix: true,

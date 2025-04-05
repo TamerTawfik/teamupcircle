@@ -67,7 +67,7 @@ export function TeamupStyle({ user, isProfileOwner }: PageProps) {
               >
                 <Pencil className="h-3 w-3" />
                 <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                  Edit Profile
+                  Edit
                 </span>
               </Button>
             )}

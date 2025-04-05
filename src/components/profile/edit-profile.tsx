@@ -119,7 +119,7 @@ export function EditProfileDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="border-b p-4">
-          <DialogTitle className="text-lg">Edit Profile</DialogTitle>
+          <DialogTitle className="text-lg">Edit Preferences</DialogTitle>
           <DialogDescription>
             Update your profile information and preferences
           </DialogDescription>
