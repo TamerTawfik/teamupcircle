@@ -1,26 +1,12 @@
 import * as React from "react";
-import { Inbox } from "lucide-react";
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getGithubUser } from "@/lib/github";
 import { ProfileInfo } from "@/components/profile/info";
-import {
-  TechStack,
-  TechStackError,
-  TechStackSkeleton,
-} from "@/components/profile/tech-stack";
+import { RepositoryAnalysis } from "@/components/profile/repository-analysis";
 import { Suspense } from "react";
 import { getCurrentUser } from "@/app/actions/auth";
-import { getTechStack } from "@/lib/tech-stack";
+// import { getTechStack } from "@/lib/tech-stack";
 import { TeamupStyle } from "@/components/profile/teamup-style";
 import { getConnectionStatus } from "@/app/actions/connections";
 import { auth } from "@/auth";
@@ -49,18 +35,18 @@ export async function generateMetadata({
   }
 }
 
-async function TechStackSection({ username }: { username: string }) {
-  try {
-    const data = await getTechStack(username);
-    return <TechStack username={username} initialData={data} />;
-  } catch (error) {
-    return (
-      <TechStackError
-        error={error instanceof Error ? error : new Error("Unknown error")}
-      />
-    );
-  }
-}
+// async function TechStackSection({ username }: { username: string }) {
+//   try {
+//     const data = await getTechStack(username);
+//     return <TechStack username={username} initialData={data} />;
+//   } catch (error) {
+//     return (
+//       <TechStackError
+//         error={error instanceof Error ? error : new Error("Unknown error")}
+//       />
+//     );
+//   }
+// }
 
 export default async function MemberProfile({ params }: PageProps) {
   const { username } = await params;
@@ -87,25 +73,9 @@ export default async function MemberProfile({ params }: PageProps) {
               targetUserId={userProfile?.id}
               connection={connection}
             />
-            <Suspense fallback={<TechStackSkeleton />}>
-              <TechStackSection username={user.login} />
+            <Suspense>
+              <RepositoryAnalysis username={user.login} />
             </Suspense>
-            <Card>
-              <CardHeader className="px-7">
-                <CardTitle>Projects</CardTitle>
-                <CardDescription>Discover recent Projects.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[200px] flex items-center justify-center flex-col space-y-4">
-                  <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center">
-                    <Inbox size={18} />
-                  </div>
-                  <p className="text-[#606060] text-sm">
-                    The project section is under construction.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
           </div>
           {userProfile && (
             <TeamupStyle user={userProfile} isProfileOwner={isProfileOwner} />

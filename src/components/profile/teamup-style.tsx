@@ -21,12 +21,12 @@ import techStack from "@/data/tech.json";
 import projectDomains from "@/data/project-domains.json";
 import roles from "@/data/roles.json";
 
-interface PageProps {
+interface TeamupStyleProps {
   user: ProfileWithCollaboration;
   isProfileOwner: boolean;
 }
 
-export function TeamupStyle({ user, isProfileOwner }: PageProps) {
+export function TeamupStyle({ user, isProfileOwner }: TeamupStyleProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   return (
@@ -140,7 +140,7 @@ export function TeamupStyle({ user, isProfileOwner }: PageProps) {
             Updated{" "}
             <span>
               {formatDistance(
-                new Date(user.collaborationStyles?.updatedAt || Date.now()),
+                new Date(user.collaborationStyles?.updatedAt || user.updatedAt),
                 new Date(),
                 {
                   addSuffix: true,
