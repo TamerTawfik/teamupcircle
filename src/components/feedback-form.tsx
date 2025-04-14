@@ -86,7 +86,7 @@ export function FeedbackForm() {
           variant="outline"
           className="rounded-full font-normal h-[32px] p-0 px-3 text-xs text-[#878787]"
         >
-          Beta feedback
+          Alpha feedback
         </Button>
       </PopoverTrigger>
       <PopoverContent

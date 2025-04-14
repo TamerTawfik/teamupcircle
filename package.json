@@ -11,6 +11,8 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
     "@hookform/resolvers": "^3.10.0",
+    "@octokit/graphql": "^8.2.2",
+    "@octokit/rest": "^21.1.1",
     "@prisma/client": "^6.4.1",
     "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-avatar": "^1.1.2",

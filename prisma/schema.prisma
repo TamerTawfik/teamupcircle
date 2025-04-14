@@ -59,6 +59,9 @@ model User {
     // Feedback related fields
     feedbacks Feedback[]
 
+    // Repository analysis related fields
+    RepositoryAnalysis RepositoryAnalysis[]
+
     status      Status    @default(ACTIVE)
     blockedAt   DateTime?
     blockReason String?
@@ -171,6 +174,22 @@ model Feedback {
     updatedAt DateTime       @updatedAt
 
     user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model RepositoryAnalysis {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    userId   String
+    username String
+    data     Json // Stores the analysis results
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, username])
+    @@index([userId])
+    @@index([username])
 }
 
 enum Role {
