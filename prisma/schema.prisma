@@ -94,17 +94,46 @@ model CollaborationStyle {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    techStack          String[] // Preferred technology stack
     availabilityStatus AvailabilityStatus @default(AVAILABLE)
     hoursPerWeek       Int?
     teamSize           TeamSize           @default(Less_Than_5)
-    teamRoles          String[]
-    projectDomains     String[] // Array of preferred project domains
+
     // Relations
-    userId             String             @unique
-    user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    techs          Tech[] // Replaced techStack String[]
+    projectDomains ProjectDomain[] // Replaced projectDomains String[]
+    teamRoles      TeamRole[] // Replaced teamRoles String[]
 
     @@index([userId])
+}
+
+// New model for Tech Stack items
+model Tech {
+    id     String               @id @default(cuid())
+    name   String               @unique // e.g., "react", "python"
+    styles CollaborationStyle[] // Relation back to CollaborationStyle
+
+    @@index([name])
+}
+
+// New model for Project Domain items
+model ProjectDomain {
+    id     String               @id @default(cuid())
+    name   String               @unique // e.g., "web development", "machine learning"
+    styles CollaborationStyle[] // Relation back to CollaborationStyle
+
+    @@index([name])
+}
+
+// New model for Team Role items
+model TeamRole {
+    id     String               @id @default(cuid())
+    name   String               @unique // e.g., "frontend developer", "project manager"
+    styles CollaborationStyle[] // Relation back to CollaborationStyle
+
+    @@index([name])
 }
 
 model Connection {

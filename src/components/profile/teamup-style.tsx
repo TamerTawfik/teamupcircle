@@ -29,6 +29,11 @@ interface TeamupStyleProps {
 export function TeamupStyle({ user, isProfileOwner }: TeamupStyleProps) {
   const [isEditing, setIsEditing] = useState(false);
 
+  // Ensure collaborationStyles and the related arrays exist before mapping
+  const techs = user.collaborationStyles?.techs || [];
+  const rolesList = user.collaborationStyles?.teamRoles || [];
+  const domains = user.collaborationStyles?.projectDomains || [];
+
   return (
     <div>
       <Card className="overflow-hidden">
@@ -101,11 +106,16 @@ export function TeamupStyle({ user, isProfileOwner }: TeamupStyleProps) {
                 Tech Stack
               </label>
               <div className="flex flex-wrap gap-2 mt-1">
-                {user.collaborationStyles?.techStack?.map((tech) => (
-                  <Badge key={tech} variant="secondary">
-                    {getLabel(tech, techStack)}
-                  </Badge>
-                )) || "Not specified"}
+                {techs.length > 0 ? (
+                  techs.map((tech) => (
+                    <Badge key={tech.id} variant="secondary">
+                      {/* Use tech.name for display and potentially for getLabel if needed */}
+                      {getLabel(tech.name, techStack)}
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="text-muted-foreground">Not specified</span>
+                )}
               </div>
             </div>
             <div>
@@ -113,11 +123,16 @@ export function TeamupStyle({ user, isProfileOwner }: TeamupStyleProps) {
                 Team Roles
               </label>
               <div className="flex flex-wrap gap-2 mt-1">
-                {user.collaborationStyles?.teamRoles?.map((role) => (
-                  <Badge key={role} variant="secondary">
-                    {getLabel(role, roles)}
-                  </Badge>
-                )) || "Not specified"}
+                {rolesList.length > 0 ? (
+                  rolesList.map((role) => (
+                    <Badge key={role.id} variant="secondary">
+                      {/* Use role.name for display and potentially for getLabel if needed */}
+                      {getLabel(role.name, roles)}
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="text-muted-foreground">Not specified</span>
+                )}
               </div>
             </div>
           </div>
@@ -126,11 +141,16 @@ export function TeamupStyle({ user, isProfileOwner }: TeamupStyleProps) {
             <div className="font-semibold">Project Domains</div>
             <div>
               <div className="flex flex-wrap gap-2 mt-1">
-                {user.collaborationStyles?.projectDomains?.map((type) => (
-                  <Badge key={type} variant="secondary">
-                    {getLabel(type, projectDomains)}
-                  </Badge>
-                )) || "Not specified"}
+                {domains.length > 0 ? (
+                  domains.map((domain) => (
+                    <Badge key={domain.id} variant="secondary">
+                      {/* Use domain.name for display and potentially for getLabel if needed */}
+                      {getLabel(domain.name, projectDomains)}
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="text-muted-foreground">Not specified</span>
+                )}
               </div>
             </div>
           </div>

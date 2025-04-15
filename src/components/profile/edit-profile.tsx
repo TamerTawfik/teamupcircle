@@ -67,19 +67,19 @@ export function EditProfileDialog({
       hoursPerWeek: user.collaborationStyles?.hoursPerWeek || 0,
       teamSize: user.collaborationStyles?.teamSize || "Less_Than_5",
       techStack:
-        user.collaborationStyles?.techStack?.map((tech) => ({
-          value: tech,
-          label: tech,
+        user.collaborationStyles?.techs?.map((tech) => ({
+          value: tech.name,
+          label: tech.name,
         })) || [],
       teamRoles:
         user.collaborationStyles?.teamRoles?.map((role) => ({
-          value: role,
-          label: role,
+          value: role.name,
+          label: role.name,
         })) || [],
       projectDomains:
         user.collaborationStyles?.projectDomains?.map((domain) => ({
-          value: domain,
-          label: domain,
+          value: domain.name,
+          label: domain.name,
         })) || [],
     },
   });

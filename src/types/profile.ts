@@ -1,7 +1,13 @@
-import { CollaborationStyle, User } from "@prisma/client";
+import { CollaborationStyle, User, Tech, TeamRole, ProjectDomain } from "@prisma/client";
+
+export type CollaborationStyleWithRelations = CollaborationStyle & {
+  techs: Tech[];
+  projectDomains: ProjectDomain[];
+  teamRoles: TeamRole[];
+};
 
 export type ProfileWithCollaboration = User & {
-  collaborationStyles: CollaborationStyle | null;
+  collaborationStyles: CollaborationStyleWithRelations | null;
 };
 
 export type GitHubUserData = {

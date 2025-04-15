@@ -11,21 +11,21 @@ export const ProfileFormSchema = z.object({
     "More_Than_20",
   ]),
   techStack: z.array(
-        z.object({
-          label: z.string(),
-          value: z.string(),
-        }),
-      ),
-  teamRoles: z.array(
     z.object({
       label: z.string(),
-      value: z.string(),
+      value: z.string().toLowerCase(), // Match Tech.name which is stored lowercase
+    }),
+  ),
+  teamRoles: z.array(
+    z.object({
+      label: z.string(), 
+      value: z.string().toLowerCase(), // Match TeamRole.name which is stored lowercase
     }),
   ),
   projectDomains: z.array(
     z.object({
       label: z.string(),
-      value: z.string(),
+      value: z.string().toLowerCase(), // Match ProjectDomain.name which is stored lowercase
     }),
   ),
 });
