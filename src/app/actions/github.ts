@@ -249,12 +249,14 @@ async function detectTechnologies(
     'Nuxt.js':      { packages: ['nuxt'], files: ['nuxt.config.js', 'nuxt.config.ts'] },
     'Angular':      { packages: ['@angular/core'], files: ['angular.json'] },
     'Svelte':       { packages: ['svelte'], files: ['svelte.config.js'] },
-    'SvelteKit':    { packages: ['@sveltejs/kit'], files: ['svelte.config.js'] }, // Often uses svelte.config.js too
+    'SvelteKit':    { packages: ['@sveltejs/kit'], files: ['svelte.config.js'] },
     'Astro':        { packages: ['astro'], files: ['astro.config.mjs', 'astro.config.js', 'astro.config.ts'] },
     'Vite':         { packages: ['vite'], files: ['vite.config.js', 'vite.config.ts'] },
-    'Node.js':      { packages: ['express', 'koa', 'hapi', 'fastify', 'nest', '@nestjs/core'] }, // Check package first
+    'Node.js':      { packages: ['express', 'koa', 'hapi', 'fastify', 'nest', '@nestjs/core', 'socket.io'] },
     'Tailwind CSS': { packages: ['tailwindcss'], files: ['tailwind.config.js', 'tailwind.config.ts'] },
     'Bootstrap':    { packages: ['bootstrap', 'react-bootstrap', '@ng-bootstrap/ng-bootstrap'] },
+    'Material UI':  { packages: ['@mui/material', '@material-ui/core'] },
+    'Chakra UI':    { packages: ['@chakra-ui/react'] },
     'TypeScript':   { packages: ['typescript'], files: ['tsconfig.json'] },
     'Jest':         { packages: ['jest'], files: ['jest.config.js', 'jest.config.ts'] },
     'Vitest':       { packages: ['vitest'], files: ['vitest.config.js', 'vitest.config.ts'] },
@@ -263,8 +265,28 @@ async function detectTechnologies(
     'ESLint':       { packages: ['eslint'], files: ['.eslintrc', '.eslintrc.js', '.eslintrc.json', '.eslintrc.yaml', '.eslintrc.yml'] },
     'Prettier':     { packages: ['prettier'], files: ['.prettierrc', '.prettierrc.js', '.prettierrc.json', 'prettier.config.js'] },
     'Docker':       { files: ['Dockerfile', 'docker-compose.yml'] },
-    'GitHub Actions':{ files: ['.github/workflows/'] }, // Check directory presence implicitly via fileExists logic below
+    'GitHub Actions':{ files: ['.github/workflows/'] },
     'Dependabot':   { files: ['.github/dependabot.yml'] },
+    'Redux':        { packages: ['redux', '@reduxjs/toolkit', 'react-redux'] },
+    'GraphQL':      { packages: ['graphql', 'apollo-server', '@apollo/client'], files: ['schema.graphql'] },
+    'Prisma':       { packages: ['@prisma/client', 'prisma'], files: ['schema.prisma'] },
+    'MongoDB':      { packages: ['mongodb', 'mongoose'] },
+    'PostgreSQL':   { packages: ['pg', 'typeorm', 'sequelize'] },
+    'Redis':        { packages: ['redis', 'ioredis'] },
+    'AWS SDK':      { packages: ['aws-sdk', '@aws-sdk/client-s3'] },
+    'Firebase':     { packages: ['firebase', '@firebase/app'], files: ['firebase.json'] },
+    'Webpack':      { packages: ['webpack'], files: ['webpack.config.js'] },
+    'Rollup':       { packages: ['rollup'], files: ['rollup.config.js'] },
+    'Storybook':    { packages: ['@storybook/react', '@storybook/vue'], files: ['.storybook/main.js'] },
+    'Sass':         { packages: ['sass', 'node-sass'], files: ['*.scss'] },
+    'Less':         { packages: ['less'], files: ['*.less'] },
+    'Styled Components': { packages: ['styled-components'] },
+    'Emotion':      { packages: ['@emotion/react', '@emotion/styled'] },
+    'Three.js':     { packages: ['three'] },
+    'D3.js':        { packages: ['d3'] },
+    'Socket.IO':    { packages: ['socket.io', 'socket.io-client'] },
+    'Web3.js':      { packages: ['web3', 'ethers'] },
+    'Electron':     { packages: ['electron'], files: ['electron.js', 'electron.config.js'] }
   };
 
   const fileCheckPromises: Promise<{ tech: string, exists: boolean }>[] = [];
@@ -675,7 +697,6 @@ export async function analyzeRepositories(username: string): Promise<RepositoryA
   try {
     const existingAnalysis = await prisma.repositoryAnalysis.findFirst({
       where: {
-        userId: userId,
         username: username,
       },
       orderBy: {

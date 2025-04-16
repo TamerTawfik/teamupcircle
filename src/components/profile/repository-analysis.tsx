@@ -1004,11 +1004,11 @@ export function RepositoryAnalysis({ username }: RepositoryAnalysisProps) {
 
           {!isLoading && analysis && (
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-4">
+              <TabsList className="grid w-full grid-cols-4 mb-4">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="details">Details</TabsTrigger>
                 <TabsTrigger value="activity">Activity</TabsTrigger>
-                <TabsTrigger value="quality">CURISM Scores</TabsTrigger>
+                <TabsTrigger value="quality">CURISM</TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview" className="mt-4">
