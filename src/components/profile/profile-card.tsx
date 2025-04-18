@@ -46,8 +46,8 @@ export function ProfileCard({ profile }: { profile: ProfileWithGitHub }) {
                 <Users className="h-4 w-4 mt-1 text-muted-foreground" />
                 <div className="flex flex-wrap gap-2">
                   {profile.collaborationStyles.teamRoles.map((role) => (
-                    <Badge key={role} variant="secondary">
-                      {getLabel(role, roles)}
+                    <Badge key={role.id} variant="secondary">
+                      {getLabel(role.name, roles)}
                     </Badge>
                   ))}
                 </div>

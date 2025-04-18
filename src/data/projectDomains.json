@@ -1,0 +1,23 @@
+[
+  {"id": "web-development", "name": "Web Development"},
+  {"id": "mobile-development", "name": "Mobile Development"},
+  {"id": "data-science", "name": "Data Science"},
+  {"id": "machine-learning", "name": "Machine Learning"},
+  {"id": "artificial-intelligence", "name": "Artificial Intelligence"},
+  {"id": "cybersecurity", "name": "Cybersecurity"},
+  {"id": "game-development", "name": "Game Development"},
+  {"id": "blockchain", "name": "Blockchain"},
+  {"id": "iot", "name": "Internet of Things (IoT)"},
+  {"id": "cloud-computing", "name": "Cloud Computing"},
+  {"id": "devops-infrastructure", "name": "DevOps & Infrastructure"},
+  {"id": "ecommerce", "name": "E-commerce"},
+  {"id": "fintech", "name": "FinTech"},
+  {"id": "healthtech", "name": "HealthTech"},
+  {"id": "edtech", "name": "EdTech"},
+  {"id": "big-data", "name": "Big Data & Analytics"},
+  {"id": "ar-vr", "name": "AR/VR"},
+  {"id": "embedded-systems", "name": "Embedded Systems"},
+  {"id": "robotics", "name": "Robotics"},
+  {"id": "scientific-computing", "name": "Scientific Computing"},
+  {"id": "sustainability-tech", "name": "Sustainability Tech"}
+] 

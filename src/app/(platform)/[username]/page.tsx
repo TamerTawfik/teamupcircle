@@ -6,8 +6,7 @@ import { ProfileInfo } from "@/components/profile/info";
 import { RepositoryAnalysis } from "@/components/profile/repository-analysis";
 import { Suspense } from "react";
 import { getCurrentUser } from "@/app/actions/auth";
-// import { getTechStack } from "@/lib/tech-stack";
-import { TeamupStyle } from "@/components/profile/teamup-style";
+import { CollaborationStyleDisplay } from "@/components/profile/collab";
 import { getConnectionStatus } from "@/app/actions/connections";
 import { auth } from "@/auth";
 
@@ -34,19 +33,6 @@ export async function generateMetadata({
     };
   }
 }
-
-// async function TechStackSection({ username }: { username: string }) {
-//   try {
-//     const data = await getTechStack(username);
-//     return <TechStack username={username} initialData={data} />;
-//   } catch (error) {
-//     return (
-//       <TechStackError
-//         error={error instanceof Error ? error : new Error("Unknown error")}
-//       />
-//     );
-//   }
-// }
 
 export default async function MemberProfile({ params }: PageProps) {
   const { username } = await params;
@@ -78,7 +64,10 @@ export default async function MemberProfile({ params }: PageProps) {
             </Suspense>
           </div>
           {userProfile && (
-            <TeamupStyle user={userProfile} isProfileOwner={isProfileOwner} />
+            <CollaborationStyleDisplay
+              userId={userProfile.id}
+              isProfileOwner={isProfileOwner}
+            />
           )}
         </main>
       </div>

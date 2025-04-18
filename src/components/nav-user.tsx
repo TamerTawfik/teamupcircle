@@ -38,7 +38,7 @@ export function NavUser() {
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
                   src={session?.user.image ?? undefined}
-                  alt={session?.user.username}
+                  alt={session?.user.username ?? ""}
                 />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
@@ -62,7 +62,7 @@ export function NavUser() {
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
                     src={session?.user.image ?? undefined}
-                    alt={session?.user.username}
+                    alt={session?.user.username ?? ""}
                   />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
