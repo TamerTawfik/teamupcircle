@@ -9,8 +9,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProfileWithGitHub } from "@/types/profile";
 import { MapPin, Users, Clock } from "lucide-react";
-import roles from "@/data/roles.json";
-import { getLabel } from "@/lib/getLabel";
 
 export function ProfileCard({ profile }: { profile: ProfileWithGitHub }) {
   return (
@@ -44,19 +42,23 @@ export function ProfileCard({ profile }: { profile: ProfileWithGitHub }) {
             {profile.collaborationStyles.teamRoles.length > 0 && (
               <div className="flex items-start gap-2">
                 <Users className="h-4 w-4 mt-1 text-muted-foreground" />
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1">
                   {profile.collaborationStyles.teamRoles.map((role) => (
-                    <Badge key={role.id} variant="secondary">
-                      {getLabel(role.name, roles)}
+                    <Badge
+                      key={role.id}
+                      variant="secondary"
+                      className="text-xs"
+                    >
+                      {role.name}
                     </Badge>
                   ))}
                 </div>
               </div>
             )}
 
-            {profile.collaborationStyles.availabilityStatus && (
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              {profile.collaborationStyles.availabilityStatus && (
                 <Badge
                   variant={
                     profile.collaborationStyles.availabilityStatus ===
@@ -64,18 +66,19 @@ export function ProfileCard({ profile }: { profile: ProfileWithGitHub }) {
                       ? "default"
                       : "secondary"
                   }
+                  className="text-xs"
                 >
                   {profile.collaborationStyles.availabilityStatus
                     .replace("_", " ")
                     .toLowerCase()}
                 </Badge>
-                {profile.collaborationStyles.hoursPerWeek && (
-                  <span className="text-sm text-muted-foreground">
-                    · {profile.collaborationStyles.hoursPerWeek}h/week
-                  </span>
-                )}
-              </div>
-            )}
+              )}
+              {profile.collaborationStyles.hoursPerWeek && (
+                <span className="text-sm text-muted-foreground">
+                  · {profile.collaborationStyles.hoursPerWeek}h/week
+                </span>
+              )}
+            </div>
           </div>
         )}
       </CardContent>
