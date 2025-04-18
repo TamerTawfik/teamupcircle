@@ -5,11 +5,8 @@ import { Connection } from "@prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { Search } from "lucide-react";
-import roles from "@/data/roles.json";
-import { getLabel } from "@/lib/getLabel";
 import Link from "next/link";
 
 interface ConnectionsListProps {
@@ -82,22 +79,6 @@ export function ConnectionsList({ connections }: ConnectionsListProps) {
                       {connection.otherUser.name ||
                         connection.otherUser.username}
                     </h3>
-
-                    {connection.otherUser.collaborationStyles?.teamRoles && (
-                      <div className="flex flex-wrap gap-1">
-                        {connection.otherUser.collaborationStyles.teamRoles.map(
-                          (role: string) => (
-                            <Badge
-                              key={role}
-                              variant="secondary"
-                              className="text-xs"
-                            >
-                              {getLabel(role, roles)}
-                            </Badge>
-                          )
-                        )}
-                      </div>
-                    )}
 
                     <p className="text-sm text-muted-foreground">
                       Connected{" "}
