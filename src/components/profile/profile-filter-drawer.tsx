@@ -26,12 +26,17 @@ import { AvailabilityStatus, TeamSize } from "@prisma/client"; // Import enums
 import MultipleSelector, {
   Option,
 } from "@/components/profile/multiple-selector";
-import {
-  LookupItem,
-  getTechOptions,
-  getProjectDomainOptions,
-  getTeamRoleOptions,
-} from "@/app/actions/lookups";
+
+// Import JSON data directly
+import techData from "@/data/techs.json";
+import domainData from "@/data/projectDomains.json";
+import roleData from "@/data/teamRoles.json";
+
+// Define LookupItem locally as it's no longer imported
+interface LookupItem {
+  id: string;
+  name: string;
+}
 
 // Helper function to get enum values (useful for dropdowns)
 function getEnumValues<T extends object>(enumObject: T): string[] {
@@ -45,6 +50,17 @@ interface ProfileFilterDrawerProps {
   initialFilters: ProfileFilters;
   onApplyFilters: (filters: ProfileFilters) => void;
 }
+
+// Helper function to map lookup items to selector options and sort them (defined outside component)
+const mapToOptions = (items: LookupItem[]): Option[] =>
+  items
+    .map((item) => ({ value: item.name, label: item.name }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+// Map imported data directly (constants defined outside component)
+const techOptions = mapToOptions(techData as LookupItem[]);
+const domainOptions = mapToOptions(domainData as LookupItem[]);
+const roleOptions = mapToOptions(roleData as LookupItem[]);
 
 export function ProfileFilterDrawer({
   open,
@@ -63,37 +79,8 @@ export function ProfileFilterDrawer({
     hoursPerWeek?: number;
   }>({});
 
-  const [techOptions, setTechOptions] = useState<Option[]>([]);
-  const [domainOptions, setDomainOptions] = useState<Option[]>([]);
-  const [roleOptions, setRoleOptions] = useState<Option[]>([]);
-  const [isLoadingOptions, setIsLoadingOptions] = useState(true);
-
   useEffect(() => {
-    if (open && isLoadingOptions) {
-      const fetchOptions = async () => {
-        try {
-          const [techs, domains, roles] = await Promise.all([
-            getTechOptions(),
-            getProjectDomainOptions(),
-            getTeamRoleOptions(),
-          ]);
-          const mapToOptions = (items: LookupItem[]): Option[] =>
-            items.map((item) => ({ value: item.name, label: item.name }));
-
-          setTechOptions(mapToOptions(techs));
-          setDomainOptions(mapToOptions(domains));
-          setRoleOptions(mapToOptions(roles));
-        } catch (error) {
-          console.error("Failed to fetch filter options:", error);
-        } finally {
-          setIsLoadingOptions(false);
-        }
-      };
-      fetchOptions();
-    }
-  }, [open, isLoadingOptions]);
-
-  useEffect(() => {
+    // Helper function to map initial string filter values back to Option objects
     const mapStringsToOptions = (
       values: string[] | undefined,
       availableOptions: Option[]
@@ -104,14 +91,18 @@ export function ProfileFilterDrawer({
           const foundOption = availableOptions.find(
             (opt) => opt.value === value
           );
+          // If the initial value isn't in our current options list, create a temporary option
+          // This handles cases where filter values might persist from old/different option sets
           return foundOption ? foundOption : { value: value, label: value };
         })
         .filter((opt): opt is Option => opt !== null);
     };
 
+    // Initialize internal state based on initialFilters prop
     setInternalFilters({
       location: initialFilters.location,
       username: initialFilters.username,
+      // Use the constant, pre-processed options
       techStack: mapStringsToOptions(initialFilters.techStack, techOptions),
       availabilityStatus: initialFilters.availabilityStatus,
       teamSize: initialFilters.teamSize,
@@ -122,7 +113,8 @@ export function ProfileFilterDrawer({
       teamRoles: mapStringsToOptions(initialFilters.teamRoles, roleOptions),
       hoursPerWeek: initialFilters.hoursPerWeek,
     });
-  }, [initialFilters, techOptions, domainOptions, roleOptions]);
+    // Only depend on initialFilters, as options are now constant for the component instance
+  }, [initialFilters]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -165,6 +157,7 @@ export function ProfileFilterDrawer({
   };
 
   const handleApply = () => {
+    // Transform internal Option[] state back to string[] for applying filters
     const filtersToApply: ProfileFilters = {
       location: internalFilters.location,
       username: internalFilters.username,
@@ -191,12 +184,15 @@ export function ProfileFilterDrawer({
   };
 
   const handleClear = () => {
+    // Clear internal state for multi-selects and apply empty filters
     setInternalFilters({
       techStack: [],
       projectDomains: [],
       teamRoles: [],
     });
-    onApplyFilters({});
+    onApplyFilters({}); // Apply empty filters object
+    // Keep the drawer open after clearing, allowing users to apply the cleared state
+    // onOpenChange(false); // Optionally close drawer after clearing
   };
 
   const availabilityStatuses = getEnumValues(AvailabilityStatus);
@@ -205,135 +201,127 @@ export function ProfileFilterDrawer({
   return (
     <Drawer direction="right" open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="h-full max-w-sm ml-auto p-4">
-        {" "}
-        {/* Adjusted for right side */}
         <DrawerHeader>
           <DrawerTitle>Filter Profiles</DrawerTitle>
           <DrawerDescription>
             Refine the list of developer profiles.
           </DrawerDescription>
         </DrawerHeader>
-        {isLoadingOptions ? (
-          <div className="p-4 text-center">Loading options...</div>
-        ) : (
-          <div className="space-y-4 overflow-y-auto p-1 flex-grow">
-            {" "}
-            {/* Added padding, scroll, and flex-grow */}
-            {/* User Filters */}
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                name="location"
-                value={internalFilters.location || ""}
-                onChange={handleInputChange}
-                placeholder="Search by country or city..."
-              />
-            </div>
-            <div>
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                name="username"
-                value={internalFilters.username || ""}
-                onChange={handleInputChange}
-                placeholder="Search by GitHub username..."
-              />
-            </div>
-            {/* Collaboration Style Filters */}
-            <div>
-              <Label htmlFor="techStack">Tech Stack</Label>
-              <MultipleSelector
-                options={techOptions}
-                value={internalFilters.techStack ?? []}
-                onChange={(selected) =>
-                  handleMultipleSelectorChange("techStack", selected)
-                }
-                placeholder="Select tech stack..."
-                emptyIndicator="No tech found."
-              />
-            </div>
-            <div>
-              <Label htmlFor="projectDomains">Project Domains</Label>
-              <MultipleSelector
-                options={domainOptions}
-                value={internalFilters.projectDomains ?? []}
-                onChange={(selected) =>
-                  handleMultipleSelectorChange("projectDomains", selected)
-                }
-                placeholder="Select domains..."
-                emptyIndicator="No domains found."
-              />
-            </div>
-            <div>
-              <Label htmlFor="teamRoles">Team Roles</Label>
-              <MultipleSelector
-                options={roleOptions}
-                value={internalFilters.teamRoles ?? []}
-                onChange={(selected) =>
-                  handleMultipleSelectorChange("teamRoles", selected)
-                }
-                placeholder="Select roles..."
-                emptyIndicator="No roles found."
-              />
-            </div>
-            <div>
-              <Label htmlFor="hoursPerWeek">Min. Hours per Week</Label>
-              <Input
-                id="hoursPerWeek"
-                name="hoursPerWeek"
-                type="number"
-                min="0"
-                value={internalFilters.hoursPerWeek ?? ""}
-                onChange={handleNumberInputChange}
-                placeholder="e.g., 10"
-              />
-            </div>
-            <div>
-              <Label htmlFor="availabilityStatus">Availability Status</Label>
-              <Select
-                name="availabilityStatus"
-                value={internalFilters.availabilityStatus || ""}
-                onValueChange={(value) =>
-                  handleSelectChange("availabilityStatus", value)
-                }
-              >
-                <SelectTrigger id="availabilityStatus">
-                  <SelectValue placeholder="Any Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availabilityStatuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status.replace("_", " ")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="teamSize">Preferred Team Size</Label>
-              <Select
-                name="teamSize"
-                value={internalFilters.teamSize || ""}
-                onValueChange={(value) => handleSelectChange("teamSize", value)}
-              >
-                <SelectTrigger id="teamSize">
-                  <SelectValue placeholder="Any Size" />
-                </SelectTrigger>
-                <SelectContent>
-                  {teamSizes.map((size) => (
-                    <SelectItem key={size} value={size}>
-                      {size.replace("_", " ")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+        <div className="space-y-4 overflow-y-auto p-1 flex-grow">
+          {/* User Filters */}
+          <div>
+            <Label htmlFor="location">Location</Label>
+            <Input
+              id="location"
+              name="location"
+              value={internalFilters.location || ""}
+              onChange={handleInputChange}
+              placeholder="Search by country or city..."
+            />
           </div>
-        )}
+          <div>
+            <Label htmlFor="username">Username</Label>
+            <Input
+              id="username"
+              name="username"
+              value={internalFilters.username || ""}
+              onChange={handleInputChange}
+              placeholder="Search by GitHub username..."
+            />
+          </div>
+          {/* Collaboration Style Filters */}
+          <div>
+            <Label htmlFor="techStack">Tech Stack</Label>
+            <MultipleSelector
+              options={techOptions} // Use constant options
+              value={internalFilters.techStack ?? []}
+              onChange={(selected) =>
+                handleMultipleSelectorChange("techStack", selected)
+              }
+              placeholder="Select tech stack..."
+              emptyIndicator="No tech found."
+            />
+          </div>
+          <div>
+            <Label htmlFor="projectDomains">Project Domains</Label>
+            <MultipleSelector
+              options={domainOptions} // Use constant options
+              value={internalFilters.projectDomains ?? []}
+              onChange={(selected) =>
+                handleMultipleSelectorChange("projectDomains", selected)
+              }
+              placeholder="Select domains..."
+              emptyIndicator="No domains found."
+            />
+          </div>
+          <div>
+            <Label htmlFor="teamRoles">Team Roles</Label>
+            <MultipleSelector
+              options={roleOptions} // Use constant options
+              value={internalFilters.teamRoles ?? []}
+              onChange={(selected) =>
+                handleMultipleSelectorChange("teamRoles", selected)
+              }
+              placeholder="Select roles..."
+              emptyIndicator="No roles found."
+            />
+          </div>
+          <div>
+            <Label htmlFor="hoursPerWeek">Min. Hours per Week</Label>
+            <Input
+              id="hoursPerWeek"
+              name="hoursPerWeek"
+              type="number"
+              min="0"
+              value={internalFilters.hoursPerWeek ?? ""}
+              onChange={handleNumberInputChange}
+              placeholder="e.g., 10"
+            />
+          </div>
+          <div>
+            <Label htmlFor="availabilityStatus">Availability Status</Label>
+            <Select
+              name="availabilityStatus"
+              value={internalFilters.availabilityStatus || ""}
+              onValueChange={(value) =>
+                handleSelectChange("availabilityStatus", value)
+              }
+            >
+              <SelectTrigger id="availabilityStatus">
+                <SelectValue placeholder="Any Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">Any Status</SelectItem>
+                {availabilityStatuses.map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {status.replace("_", " ")}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="teamSize">Preferred Team Size</Label>
+            <Select
+              name="teamSize"
+              value={internalFilters.teamSize || ""}
+              onValueChange={(value) => handleSelectChange("teamSize", value)}
+            >
+              <SelectTrigger id="teamSize">
+                <SelectValue placeholder="Any Size" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">Any Size</SelectItem>
+                {teamSizes.map((size) => (
+                  <SelectItem key={size} value={size}>
+                    {size.replace("_", " ")}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <DrawerFooter className="mt-auto">
-          {" "}
-          {/* Push footer to bottom */}
           <Button onClick={handleApply}>Apply Filters</Button>
           <Button variant="outline" onClick={handleClear}>
             Clear All Filters
