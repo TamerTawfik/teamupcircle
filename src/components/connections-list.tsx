@@ -8,6 +8,14 @@ import { Input } from "@/components/ui/input";
 import { formatDistanceToNow } from "date-fns";
 import { Search } from "lucide-react";
 import Link from "next/link";
+import MultipleSelector, { Option } from "@/components/multiple-selector";
+import teamRolesData from "@/data/teamRoles.json";
+
+// Format team roles for the selector
+const teamRoleOptions: Option[] = teamRolesData.map((role) => ({
+  value: role.id,
+  label: role.name,
+}));
 
 interface ConnectionsListProps {
   connections: Array<
@@ -17,8 +25,11 @@ interface ConnectionsListProps {
         name: string | null;
         username: string | null;
         image: string | null;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        collaborationStyles: any | null;
+        githubId: string | null;
+        location: string | null;
+        collaborationStyles: {
+          teamRoles: Array<{ id: string; name: string }> | null;
+        } | null;
       };
     }
   >;
@@ -26,30 +37,58 @@ interface ConnectionsListProps {
 
 export function ConnectionsList({ connections }: ConnectionsListProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
+  const [roleFilter, setRoleFilter] = useState<Option[]>([]);
 
   const filteredConnections = connections.filter((connection) => {
     const searchString = searchTerm.toLowerCase();
+    const locationString = locationFilter.toLowerCase();
+
     const name = connection.otherUser.name?.toLowerCase() || "";
     const username = connection.otherUser.username?.toLowerCase() || "";
-    const roles = connection.otherUser.collaborationStyles?.teamRoles || [];
+    const githubId = connection.otherUser.githubId?.toLowerCase() || "";
+    const location = connection.otherUser.location?.toLowerCase() || "";
+    const userRoles = connection.otherUser.collaborationStyles?.teamRoles || [];
 
-    return (
+    const matchesSearchTerm =
       name.includes(searchString) ||
       username.includes(searchString) ||
-      roles.some((role: string) => role.toLowerCase().includes(searchString))
-    );
+      githubId.includes(searchString);
+
+    const matchesLocation = location.includes(locationString);
+
+    const matchesRole =
+      roleFilter.length === 0 ||
+      userRoles.some((userRole) =>
+        roleFilter.some((selectedRole) => selectedRole.value === userRole.id)
+      );
+
+    return matchesSearchTerm && matchesLocation && matchesRole;
   });
 
   return (
     <div className="space-y-6">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search by GitHub username..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9 w-full"
+          />
+        </div>
         <Input
-          disabled
-          placeholder="Search connections..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-9 max-w-md"
+          placeholder="Filter by location..."
+          value={locationFilter}
+          onChange={(e) => setLocationFilter(e.target.value)}
+        />
+        <MultipleSelector
+          options={teamRoleOptions}
+          value={roleFilter}
+          onChange={setRoleFilter}
+          placeholder="Filter by team roles..."
+          emptyIndicator="No roles found."
         />
       </div>
 

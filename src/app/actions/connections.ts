@@ -245,7 +245,13 @@ export async function getConnections(userId: string) {
             name: true,
             username: true,
             image: true,
-            collaborationStyles: true,
+            githubId: true,
+            location: true,
+            collaborationStyles: {
+              include: {
+                teamRoles: true,
+              },
+            },
           },
         },
         receiver: {
@@ -254,9 +260,18 @@ export async function getConnections(userId: string) {
             name: true,
             username: true,
             image: true,
-            collaborationStyles: true,
+            githubId: true,
+            location: true,
+            collaborationStyles: {
+              include: {
+                teamRoles: true,
+              },
+            },
           },
         },
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 

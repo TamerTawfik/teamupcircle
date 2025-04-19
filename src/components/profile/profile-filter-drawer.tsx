@@ -23,9 +23,7 @@ import {
 } from "@/components/ui/select";
 import { ProfileFilters } from "@/app/actions/profiles";
 import { AvailabilityStatus, TeamSize } from "@prisma/client"; // Import enums
-import MultipleSelector, {
-  Option,
-} from "@/components/profile/multiple-selector";
+import MultipleSelector, { Option } from "@/components/multiple-selector";
 
 // Import JSON data directly
 import techData from "@/data/techs.json";

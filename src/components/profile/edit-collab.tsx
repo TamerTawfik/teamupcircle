@@ -48,9 +48,7 @@ import domainOptionsData from "@/data/projectDomains.json";
 import roleOptionsData from "@/data/teamRoles.json";
 
 // Import the new MultipleSelector component and its Option type
-import MultipleSelector, {
-  Option,
-} from "@/components/profile/multiple-selector";
+import MultipleSelector, { Option } from "@/components/multiple-selector";
 
 // Zod schema for form validation (client-side mirror of server action schema)
 const FormSchema = z.object({
