@@ -1,16 +1,105 @@
+"use client";
+
 import { getConversation } from "@/app/actions/messages";
 import { MessageInput } from "./message-input";
 import { MessageItem } from "./message-item";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { useMessageStore, MessageWithSender } from "@/store/message-store";
+import { useSession } from "next-auth/react";
+
+type OtherUserInfo = {
+  id: string;
+  name: string | null;
+  username: string | null;
+  image: string | null;
+} | null;
 
 interface MessageThreadProps {
-  userId: string;
+  userId: string; // This is the ID of the *other* user in the conversation
 }
 
-export async function MessageThread({ userId }: MessageThreadProps) {
-  const { messages, error } = await getConversation(userId);
+export function MessageThread({ userId }: MessageThreadProps) {
+  // Remove unused activeConversationId
+  const { messages, setMessages, setActiveConversationId } = useMessageStore();
+  const { data: session } = useSession();
+  const currentUserId = session?.user?.id;
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  // Use the simpler type for state
+  const [otherUser, setOtherUser] = useState<OtherUserInfo>(null);
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // Effect to set active conversation and fetch initial messages
+  useEffect(() => {
+    // Set this conversation as active in the store
+    setActiveConversationId(userId);
+    setIsLoading(true);
+    setError(null);
+
+    const fetchMessages = async () => {
+      try {
+        const result = await getConversation(userId);
+        if (result.error) {
+          setError(result.error);
+          setMessages([]); // Clear messages on error
+        } else if (result.messages) {
+          const fetchedMessages = result.messages as MessageWithSender[];
+          setMessages(fetchedMessages);
+
+          // Determine and set the other user's info
+          if (fetchedMessages.length > 0) {
+            const firstMsg = fetchedMessages[0];
+            // Ensure the extracted object matches OtherUserInfo
+            const userInfo =
+              firstMsg.senderId === userId
+                ? firstMsg.sender
+                : firstMsg.recipient;
+            setOtherUser(
+              userInfo
+                ? {
+                    id: userInfo.id,
+                    name: userInfo.name,
+                    username: userInfo.username,
+                    image: userInfo.image,
+                  }
+                : null
+            );
+          } else {
+            setOtherUser(null);
+            console.warn(
+              "No messages found, cannot determine other user info from messages."
+            );
+          }
+        }
+      } catch (err) {
+        setError("Failed to load messages.");
+        console.error(err);
+        setMessages([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, [userId, setMessages, setActiveConversationId]);
+
+  // Effect to scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center p-4">
+        <p className="text-muted-foreground">Loading messages...</p>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -19,14 +108,6 @@ export async function MessageThread({ userId }: MessageThreadProps) {
       </div>
     );
   }
-
-  // Get user info from the first message
-  const otherUser =
-    messages && messages.length > 0
-      ? messages[0].senderId === userId
-        ? messages[0].sender
-        : messages[0].recipient
-      : null;
 
   return (
     <div className="flex flex-col h-full">
@@ -64,12 +145,12 @@ export async function MessageThread({ userId }: MessageThreadProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages && messages.length > 0 ? (
+        {messages.length > 0 ? (
           messages.map((message) => (
             <MessageItem
               key={message.id}
               message={message}
-              isSender={message.senderId !== userId}
+              isSender={message.senderId === currentUserId}
             />
           ))
         ) : (
@@ -79,6 +160,7 @@ export async function MessageThread({ userId }: MessageThreadProps) {
             </p>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="p-4 border-t">

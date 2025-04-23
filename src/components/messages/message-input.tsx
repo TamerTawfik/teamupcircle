@@ -16,6 +16,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { useMessageStore, MessageWithSender } from "@/store/message-store";
 
 interface MessageInputProps {
   recipientId: string;
@@ -35,6 +36,7 @@ const formSchema = z.object({
 export function MessageInput({ recipientId }: MessageInputProps) {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const { addMessage } = useMessageStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,6 +61,9 @@ export function MessageInput({ recipientId }: MessageInputProps) {
           description: result.error,
         });
       } else {
+        if (result.message) {
+          addMessage(result.message as MessageWithSender);
+        }
         form.reset();
       }
     });

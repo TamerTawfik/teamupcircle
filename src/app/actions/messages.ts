@@ -1,16 +1,27 @@
-// app/actions/message.ts
 'use server'
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/auth'
 import { z } from 'zod'
+import { pusherServer } from "@/lib/pusher";
+import { Message } from '@prisma/client';
 
 // Validation schema for sending messages
 const SendMessageSchema = z.object({
   text: z.string().min(1).max(280),
   recipientId: z.string().min(1)
 })
+
+// Define a type for the message with sender details for Pusher payload
+type MessageWithSender = Message & {
+    sender: {
+        id: string;
+        name: string | null;
+        username: string | null;
+        image: string | null;
+    } | null; // Sender might be null if relation is optional or not included
+};
 
 // Types for message operations
 export type SendMessageFormData = z.infer<typeof SendMessageSchema>
@@ -77,9 +88,42 @@ export async function sendMessage(data: SendMessageFormData) {
         recipientId: data.recipientId
       }
     })
-    
+
+    // Include sender details for the Pusher payload
+    const messageWithSender: MessageWithSender | null = await prisma.message.findUnique({
+        where: { id: message.id },
+        include: {
+            sender: {
+                select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    image: true,
+                }
+            }
+        }
+    });
+
+    if (!messageWithSender) {
+      // Handle case where the message couldn't be refetched (should be rare)
+      console.error("Failed to fetch message with sender details after creation:", message.id);
+      // Decide if you still want to proceed without pusher or return an error
+    } else {
+       // Trigger Pusher event for the recipient
+      try {
+        await pusherServer.trigger(
+          `private-user-${data.recipientId}`, // Target recipient's private channel
+          'new-message', // Event name
+          messageWithSender // Send the full message data with sender info
+        );
+      } catch (pusherError) {
+        console.error("Failed to trigger Pusher event:", pusherError);
+        
+      }
+    }
+
     revalidatePath('/messages')
-    return { success: true, message }
+    return { success: true, message: messageWithSender ?? message } // Return the enriched message if available
   } catch (error) {
     console.error('Error sending message:', error)
     return {
@@ -157,6 +201,8 @@ export async function getConversation(otherUserId: string) {
         }
       })
       
+      
+      
       revalidatePath('/messages')
     }
     
@@ -233,6 +279,16 @@ export async function getConversations() {
           }
         })
         
+        // Include sender details in the last message for the conversation list
+        const lastMessageWithSender = lastMessage ? await prisma.message.findUnique({
+            where: { id: lastMessage.id },
+            include: {
+                sender: {
+                    select: { id: true, name: true, username: true, image: true }
+                }
+            }
+        }) : null;
+
         const unreadCount = await prisma.message.count({
           where: {
             senderId: user.id,
@@ -244,7 +300,7 @@ export async function getConversations() {
         
         return {
           user,
-          lastMessage,
+          lastMessage: lastMessageWithSender, 
           unreadCount
         }
       })
@@ -253,7 +309,8 @@ export async function getConversations() {
     // Sort conversations by most recent message
     const sortedConversations = conversations.sort((a, b) => {
       if (!a.lastMessage || !b.lastMessage) return 0
-      return b.lastMessage.created.getTime() - a.lastMessage.created.getTime()
+      
+      return (b.lastMessage as Message).created.getTime() - (a.lastMessage as Message).created.getTime()
     })
     
     return { success: true, conversations: sortedConversations }
@@ -319,6 +376,7 @@ export async function deleteMessage(messageId: string) {
       })
     }
     
+
     revalidatePath('/messages')
     return { success: true }
   } catch (error) {

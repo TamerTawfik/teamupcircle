@@ -1,12 +1,61 @@
+"use client";
+
 import Link from "next/link";
 import { getConversations } from "@/app/actions/messages";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { MessageSquare } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useMessageStore, Conversation } from "@/store/message-store";
+import { useParams } from "next/navigation";
+import { cn } from "@/lib/utils";
 
-export async function ConversationList() {
-  const { conversations, error } = await getConversations();
+export function ConversationList() {
+  const {
+    conversations,
+    setConversations,
+    activeConversationId,
+    setActiveConversationId,
+  } = useMessageStore();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const params = useParams();
+  // Get active ID directly from params if available, fallback to store
+  const currentActiveId =
+    typeof params?.userId === "string" ? params.userId : activeConversationId;
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const result = await getConversations();
+        if (result.error) {
+          setError(result.error);
+        } else if (result.conversations) {
+          // Explicitly cast to Conversation[] to match store type
+          setConversations(result.conversations as Conversation[]);
+        }
+      } catch (err) {
+        setError("Failed to fetch conversations.");
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchConversations();
+  }, [setConversations]); // Fetch only once on mount
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center p-4">
+        <p className="text-muted-foreground">Loading conversations...</p>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -38,7 +87,12 @@ export async function ConversationList() {
           <Link
             key={user.id}
             href={`/messages/${user.id}`}
-            className="flex items-center space-x-4 p-4 hover:bg-muted transition-colors border-b"
+            onClick={() => setActiveConversationId(user.id)}
+            className={cn(
+              "flex items-center space-x-4 p-4 hover:bg-muted transition-colors border-b",
+              // Highlight if this conversation is active
+              currentActiveId === user.id && "bg-muted"
+            )}
           >
             <Avatar>
               <AvatarImage src={user.image || ""} alt={user.name || ""} />
