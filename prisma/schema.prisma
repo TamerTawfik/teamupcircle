@@ -62,6 +62,10 @@ model User {
     // Repository analysis related fields
     RepositoryAnalysis RepositoryAnalysis[]
 
+    // Project related fields
+    ownedProjects Project[]       @relation("OwnedProjects")
+    memberships   ProjectMember[] // Relation to ProjectMember
+
     status      Status    @default(ACTIVE)
     blockedAt   DateTime?
     blockReason String?
@@ -102,9 +106,9 @@ model CollaborationStyle {
     userId String @unique
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    techs          Tech[] // Replaced techStack String[]
-    projectDomains ProjectDomain[] // Replaced projectDomains String[]
-    teamRoles      TeamRole[] // Replaced teamRoles String[]
+    techs          Tech[]
+    projectDomains ProjectDomain[]
+    teamRoles      TeamRole[]
 
     @@index([userId])
 }
@@ -221,6 +225,46 @@ model RepositoryAnalysis {
     @@index([username])
 }
 
+// New Project Model
+model Project {
+    id                 String   @id @default(cuid())
+    repoId             String?  @unique
+    name               String
+    tags               String[]
+    isBeginnerFriendly Boolean  @default(false)
+    githubRepoUrl      String?  @unique
+    requiredRoles      String[]
+
+    ownerId String
+    owner   User   @relation("OwnedProjects", fields: [ownerId], references: [id], onDelete: Cascade)
+
+    members ProjectMember[] // Relation to ProjectMember
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([ownerId])
+}
+
+// New model for Project Membership
+model ProjectMember {
+    id        String                  @id @default(cuid())
+    userId    String
+    projectId String
+    status    ProjectMembershipStatus @default(PENDING)
+    role      String?
+
+    user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([userId, projectId]) // User can only have one status per project
+    @@index([userId])
+    @@index([projectId])
+}
+
 enum Role {
     ADMIN
     MEMBER
@@ -263,6 +307,7 @@ enum NotificationType {
     CONNECTION_ACCEPTED
     CONNECTION_DECLINED
     CONNECTION_REMOVED
+    PROJECT_JOIN_REQUEST
 }
 
 enum FeedbackStatus {
@@ -275,4 +320,13 @@ enum FeedbackStatus {
 enum Status {
     ACTIVE
     BLOCKED
+}
+
+// New enum for Project Membership Status
+enum ProjectMembershipStatus {
+    PENDING
+    ACCEPTED
+    REJECTED
+    REMOVED
+    LEFT
 }

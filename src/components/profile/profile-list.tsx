@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { getProfiles, ProfileFilters } from "@/app/actions/profiles";
 import { ProfileWithGitHub } from "@/types/profile";
 import { AvailabilityStatus, TeamSize } from "@prisma/client";
-import { PaginationControls } from "@/components/ui/pagination-controls"; // Assuming you have/create this
-import { FilterIcon } from "lucide-react"; // Or any other icon
+import { PaginationControls } from "@/components/ui/pagination-controls";
+import { FilterIcon } from "lucide-react";
 
 // Helper to parse filters from search params
 const parseFiltersFromParams = (
@@ -96,6 +96,7 @@ export function ProfileList({
       setProfiles(fetchedProfiles);
       setTotalCount(fetchedTotalCount);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, initialProfiles]); // Depend on searchParams
 
   const handleApplyFilters = (newFilters: ProfileFilters) => {
