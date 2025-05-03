@@ -10,6 +10,7 @@ import {
 } from "@/components/projects/my-projects-client";
 import { getProjectDetailsFromGitHub } from "@/app/actions/projects";
 import { CreateProjectModal } from "@/components/projects/create-project-modal";
+import { ProjectJoinRequestWithDetails } from "@/components/projects/project-join-requests";
 
 export default async function MyProjectsPage() {
   const session = await auth();
@@ -23,6 +24,50 @@ export default async function MyProjectsPage() {
   }
 
   const userId = session.user.id;
+
+  // Fetch owned projects and their pending join requests
+  const pendingJoinRequestsRaw = await prisma.projectMember.findMany({
+    where: {
+      project: {
+        ownerId: userId, // Only requests for projects owned by the current user
+      },
+      status: ProjectMembershipStatus.PENDING, // Only pending requests
+    },
+    include: {
+      user: {
+        // Include details of the user requesting to join
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          image: true,
+        },
+      },
+      project: {
+        // Include minimal project details
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "asc", // Show oldest requests first
+    },
+  });
+
+  // Map to the desired structure, ensuring username is available for linking
+  const pendingJoinRequests: ProjectJoinRequestWithDetails[] =
+    pendingJoinRequestsRaw.map((req) => ({
+      id: req.id, // projectMemberId
+      projectId: req.projectId,
+      projectName: req.project.name,
+      requesterId: req.user.id,
+      requesterName: req.user.name ?? "Unknown User",
+      requesterUsername: req.user.username ?? req.user.id, // Fallback to ID if username is null
+      requesterImage: req.user.image,
+      requestedAt: req.createdAt,
+    }));
 
   const initialProjects = await prisma.project.findMany({
     where: {
@@ -102,7 +147,11 @@ export default async function MyProjectsPage() {
         <h1 className="text-xl font-bold">My Projects</h1>
         <CreateProjectModal />
       </div>
-      <MyProjectsClient projects={projectsWithGithubData} userId={userId} />
+      <MyProjectsClient
+        projects={projectsWithGithubData}
+        userId={userId}
+        pendingJoinRequests={pendingJoinRequests}
+      />
     </>
   );
 }
