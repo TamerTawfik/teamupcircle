@@ -3,8 +3,9 @@
 
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
-import { NotificationType, ProjectMembershipStatus } from '@prisma/client';
+import { NotificationType, ProjectMembershipStatus, User } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
+import { Prisma } from '@prisma/client';
 
 // Define state shape for useFormState (Join Project)
 export type JoinProjectState = {
@@ -18,6 +19,20 @@ export type ManageJoinRequestState = {
   success?: string;
   status?: ProjectMembershipStatus; // Optionally return the new status
 };
+
+// --- Type Definition for Project Member with User Details ---
+export type ProjectMemberWithUser = Prisma.ProjectMemberGetPayload<{
+    include: {
+        user: {
+            select: {
+                id: true;
+                name: true;
+                username: true;
+                image: true;
+            };
+        };
+    };
+}>;
 
 export async function requestToJoinProject(
     projectId: string,
@@ -322,6 +337,125 @@ export async function declineJoinRequest(
     } catch (error) {
         console.error("Error declining join request:", error);
         return { error: 'Database error: Failed to decline request.' };
+    }
+}
+
+// --- Action to Get Project Members ---
+export async function getProjectMembers(
+    projectId: string
+): Promise<{ members?: ProjectMemberWithUser[]; error?: string }> {
+    const session = await auth();
+    if (!session?.user?.id) {
+        return { error: "Unauthorized" };
+    }
+
+    if (!projectId) {
+        return { error: "Project ID is required." };
+    }
+
+    try {
+        const members = await prisma.projectMember.findMany({
+            where: {
+                projectId: projectId,
+                status: ProjectMembershipStatus.ACCEPTED, // Only accepted members
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        image: true,
+                    },
+                },
+            },
+            orderBy: {
+                // Optionally order by join date or username
+                user: { name: "asc" },
+            },
+        });
+        return { members };
+    } catch (error) {
+        console.error("Error fetching project members:", error);
+        return { error: "Database error: Failed to fetch members." };
+    }
+}
+
+// --- Action to Remove a Project Member ---
+export async function removeProjectMember(
+    projectMemberId: string
+): Promise<{ success?: string; error?: string }> {
+    const session = await auth();
+    const ownerId = session?.user?.id;
+
+    if (!ownerId) {
+        return { error: "Unauthorized: Must be logged in." };
+    }
+    if (!projectMemberId) {
+        return { error: "Invalid member ID." };
+    }
+
+    try {
+        // 1. Find the membership record and the associated project/user
+        const membership = await prisma.projectMember.findUnique({
+            where: { id: projectMemberId },
+            include: {
+                project: { select: { ownerId: true, name: true } },
+                user: { select: { id: true, name: true, username: true } },
+            },
+        });
+
+        if (!membership) {
+            return { error: "Membership record not found." };
+        }
+
+        // 2. Verify the current user is the project owner
+        if (membership.project.ownerId !== ownerId) {
+            return { error: "Forbidden: You are not the owner of this project." };
+        }
+
+        // 3. Prevent owner from removing themselves
+        if (membership.userId === ownerId) {
+            return { error: "Project owner cannot be removed." };
+        }
+
+        // 4. Check if the member is already removed or left
+        if (membership.status === ProjectMembershipStatus.REMOVED || membership.status === ProjectMembershipStatus.LEFT) {
+            return { error: `User is already ${membership.status.toLowerCase()}.` };
+        }
+
+        // 5. Update status to REMOVED
+        await prisma.projectMember.update({
+            where: { id: projectMemberId },
+            data: { status: ProjectMembershipStatus.REMOVED },
+        });
+
+        // 6. Send notification to the removed user
+        try {
+            await prisma.notification.create({
+                data: {
+                    userId: membership.userId,
+                    type: NotificationType.PROJECT_MEMBER_REMOVED,
+                    message: `You have been removed from the project "${membership.project.name}".`,
+                    metadata: {
+                        projectId: membership.projectId,
+                        projectName: membership.project.name,
+                    },
+                },
+            });
+        } catch (notificationError) {
+            console.error("Failed to send removal notification:", notificationError);
+             // Don't fail the operation if notification fails
+        }
+
+        // 7. Revalidate paths 
+        revalidatePath('/(platform)/my-projects');
+
+        return { success: `Successfully removed ${membership.user.name || membership.user.username} from the project.` };
+
+    } catch (error) {
+        console.error("Error removing project member:", error);
+        return { error: "Database error: Failed to remove member." };
     }
 }
  

@@ -21,6 +21,11 @@ import {
   updateProject,
 } from "@/app/actions/projects";
 import {
+  getProjectMembers,
+  removeProjectMember,
+  ProjectMemberWithUser,
+} from "@/app/actions/collaboration";
+import {
   Github,
   Link as LinkIcon,
   Star,
@@ -38,10 +43,13 @@ import {
   Users,
   Flag,
   AlertTriangle,
+  UserX,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ProjectWithOwnerAndCount } from "./my-projects-client";
 import { ProjectMembershipStatus } from "@prisma/client";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { ContributorList } from "@/components/projects/contributor-list";
 import { IssueBrowser } from "@/components/projects/issue-browser";
@@ -125,8 +133,13 @@ export function ProjectDetailsDrawer({
     loading: boolean;
   }>({ status: null, isMember: false, loading: false });
 
+  const [members, setMembers] = useState<ProjectMemberWithUser[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState(false);
+  const [membersError, setMembersError] = useState<string | null>(null);
+
   const [isEditing, setIsEditing] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isRemovingMember, setIsRemovingMember] = useState<string | null>(null);
   const [editRoles, setEditRoles] = useState<Option[]>([]);
 
   const githubRepoUrl = project?.githubRepoUrl;
@@ -188,6 +201,34 @@ export function ProjectDetailsDrawer({
   }, [isOpen, project?.id, isOwner]);
 
   useEffect(() => {
+    if (isOpen && project?.id && isOwner) {
+      setLoadingMembers(true);
+      setMembersError(null);
+      getProjectMembers(project.id)
+        .then((result) => {
+          if (result.error) {
+            setMembersError(result.error);
+            setMembers([]);
+          } else {
+            setMembers(result.members ?? []);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch members:", err);
+          setMembersError("Failed to load project members.");
+          setMembers([]);
+        })
+        .finally(() => {
+          setLoadingMembers(false);
+        });
+    } else {
+      setMembers([]);
+      setLoadingMembers(false);
+      setMembersError(null);
+    }
+  }, [isOpen, project?.id, isOwner]);
+
+  useEffect(() => {
     if (!isOpen || !project) {
       setIsEditing(false);
     } else {
@@ -241,6 +282,24 @@ export function ProjectDetailsDrawer({
         toast.success("Project deleted successfully!");
         onClose();
       }
+    });
+  };
+
+  const handleRemoveMember = (member: ProjectMemberWithUser) => {
+    if (!project || !isOwner || isPending || isRemovingMember) return;
+
+    setIsRemovingMember(member.id);
+    startTransition(async () => {
+      const result = await removeProjectMember(member.id);
+      if (result.error) {
+        toast.error(result.error || "Failed to remove member.");
+      } else {
+        toast.success(result.success || "Member removed successfully!");
+        setMembers((prevMembers) =>
+          prevMembers.filter((m) => m.id !== member.id)
+        );
+      }
+      setIsRemovingMember(null);
     });
   };
 
@@ -401,7 +460,165 @@ export function ProjectDetailsDrawer({
             </>
           )}
 
-          {/* Issues Section */}
+          {isOwner && (
+            <>
+              <Separator />
+              <div className="space-y-3">
+                <h4 className="text-sm font-medium text-muted-foreground">
+                  Project Members ({members.length})
+                </h4>
+                {loadingMembers && (
+                  <p className="text-sm text-muted-foreground">
+                    <Loader2 className="inline mr-2 h-4 w-4 animate-spin" />
+                    Loading members...
+                  </p>
+                )}
+                {membersError && (
+                  <p className="text-sm text-destructive">{membersError}</p>
+                )}
+                {!loadingMembers && !membersError && members.length === 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    No other members yet.
+                  </p>
+                )}
+                {!loadingMembers && !membersError && members.length > 0 && (
+                  <div className="space-y-2">
+                    {members.map((member) => (
+                      <div
+                        key={member.id}
+                        className="flex items-center justify-between p-2 border rounded-md bg-background"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage
+                              src={member.user.image ?? undefined}
+                              alt={member.user.name ?? "User"}
+                            />
+                            <AvatarFallback>
+                              {member.user.name?.charAt(0).toUpperCase() ?? "U"}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="text-sm">
+                            <Link
+                              href={`/users/${member.user.username}`}
+                              className="font-medium hover:underline"
+                            >
+                              {member.user.name}
+                            </Link>
+                            <span className="text-xs text-muted-foreground ml-1">
+                              (@{member.user.username})
+                            </span>
+                          </div>
+                        </div>
+                        {member.userId !== currentUserId && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                                disabled={isPending || !!isRemovingMember}
+                                title="Remove member"
+                              >
+                                {isRemovingMember === member.id ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <UserX className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Remove Member?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to remove{" "}
+                                  <span className="font-semibold">
+                                    {member.user.name}
+                                  </span>{" "}
+                                  from this project? They will be notified.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel
+                                  disabled={isPending || !!isRemovingMember}
+                                >
+                                  Cancel
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  onClick={() => handleRemoveMember(member)}
+                                  disabled={isPending || !!isRemovingMember}
+                                >
+                                  {isPending &&
+                                  isRemovingMember === member.id ? (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  ) : null}
+                                  Remove Member
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          <Separator />
+
+          <div className="space-y-3">
+            <h4 className="text-sm font-medium text-muted-foreground">
+              GitHub Details
+            </h4>
+          </div>
+
+          {details?.topics && details.topics.length > 0 && (
+            <div>
+              <h4 className="text-sm font-medium mb-2 text-muted-foreground">
+                GitHub Topics
+              </h4>
+              <div className="flex flex-wrap gap-1.5">
+                {details.topics.map((topic) => (
+                  <Badge key={topic} variant="secondary" className="text-xs">
+                    {topic}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {details?.languages && details.languages.length > 0 && (
+            <div>
+              <h4 className="text-sm font-medium mb-2 text-muted-foreground">
+                Languages
+              </h4>
+              <div className="flex flex-wrap gap-1.5">
+                {details.languages.map((lang) => (
+                  <Badge key={lang} variant="outline" className="text-xs">
+                    {lang}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {details?.contributors && details.contributors.length > 0 && (
+            <>
+              <Separator />
+              <div>
+                <h4 className="text-sm font-medium mb-2 text-muted-foreground">
+                  Contributors
+                </h4>
+                <ContributorList contributors={details.contributors} />
+              </div>
+            </>
+          )}
+
           <div className="space-y-2">
             <h3 className="font-semibold flex items-center gap-1.5">
               <AlertCircle className="h-4 w-4" /> Open Issues (
@@ -534,7 +751,7 @@ export function ProjectDetailsDrawer({
                       <Button
                         variant="destructive"
                         size="sm"
-                        disabled={isPending}
+                        disabled={isPending || !!isRemovingMember}
                       >
                         <Trash2 className="mr-2 h-4 w-4" /> Delete
                       </Button>
@@ -552,15 +769,17 @@ export function ProjectDetailsDrawer({
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel disabled={isPending}>
+                        <AlertDialogCancel
+                          disabled={isPending || !!isRemovingMember}
+                        >
                           Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           onClick={handleDeleteProject}
-                          disabled={isPending}
+                          disabled={isPending || !!isRemovingMember}
                         >
-                          {isPending ? (
+                          {isPending && !isRemovingMember ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           ) : null}{" "}
                           Delete Project
