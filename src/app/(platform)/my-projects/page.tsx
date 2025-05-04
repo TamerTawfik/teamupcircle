@@ -3,7 +3,7 @@
 import React from "react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { ProjectMembershipStatus } from "@prisma/client";
+import { ProjectMembershipStatus, Prisma } from "@prisma/client";
 import {
   MyProjectsClient,
   type ProjectWithOwnerAndCount,
@@ -12,7 +12,16 @@ import { getProjectDetailsFromGitHub } from "@/app/actions/projects";
 import { CreateProjectModal } from "@/components/projects/create-project-modal";
 import { ProjectJoinRequestWithDetails } from "@/components/projects/project-join-requests";
 
-export default async function MyProjectsPage() {
+// Define the props for the page, including searchParams
+interface MyProjectsPageProps {
+  searchParams?: {
+    requiredRoles?: string; // Comma-separated string of roles
+  };
+}
+
+export default async function MyProjectsPage({
+  searchParams,
+}: MyProjectsPageProps) {
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -24,6 +33,31 @@ export default async function MyProjectsPage() {
   }
 
   const userId = session.user.id;
+
+  // Parse search params
+  const selectedRoles =
+    searchParams?.requiredRoles?.split(",").filter(Boolean) ?? [];
+
+  // --- Fetch distinct roles for filter options ---
+  const allProjectsForFilters = await prisma.project.findMany({
+    select: {
+      requiredRoles: true,
+    },
+  });
+
+  // Aggregate unique roles
+  const uniqueRoles = [
+    ...new Set(allProjectsForFilters.flatMap((p) => p.requiredRoles || [])),
+  ].sort();
+  // --- End fetching distinct filters ---
+
+  // --- Build the Prisma where clause based on filters ---
+  const whereClause: Prisma.ProjectWhereInput = {};
+
+  if (selectedRoles.length > 0) {
+    whereClause.requiredRoles = { hasSome: selectedRoles };
+  }
+  // --- End building where clause ---
 
   // Fetch owned projects and their pending join requests
   const pendingJoinRequestsRaw = await prisma.projectMember.findMany({
@@ -71,16 +105,23 @@ export default async function MyProjectsPage() {
 
   const initialProjects = await prisma.project.findMany({
     where: {
-      OR: [
-        { ownerId: userId },
+      // Combine user-specific and filter conditions with AND
+      AND: [
         {
-          members: {
-            some: {
-              userId: userId,
-              status: ProjectMembershipStatus.ACCEPTED,
+          // User must own or be an accepted member
+          OR: [
+            { ownerId: userId },
+            {
+              members: {
+                some: {
+                  userId: userId,
+                  status: ProjectMembershipStatus.ACCEPTED,
+                },
+              },
             },
-          },
+          ],
         },
+        whereClause, // Apply the role filters from searchParams
       ],
     },
     include: {
@@ -151,6 +192,9 @@ export default async function MyProjectsPage() {
         projects={projectsWithGithubData}
         userId={userId}
         pendingJoinRequests={pendingJoinRequests}
+        availableRoles={uniqueRoles}
+        currentRoles={selectedRoles}
+        basePath="/my-projects"
       />
     </>
   );

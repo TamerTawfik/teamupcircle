@@ -571,54 +571,6 @@ export function ProjectDetailsDrawer({
 
           <Separator />
 
-          <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground">
-              GitHub Details
-            </h4>
-          </div>
-
-          {details?.topics && details.topics.length > 0 && (
-            <div>
-              <h4 className="text-sm font-medium mb-2 text-muted-foreground">
-                GitHub Topics
-              </h4>
-              <div className="flex flex-wrap gap-1.5">
-                {details.topics.map((topic) => (
-                  <Badge key={topic} variant="secondary" className="text-xs">
-                    {topic}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {details?.languages && details.languages.length > 0 && (
-            <div>
-              <h4 className="text-sm font-medium mb-2 text-muted-foreground">
-                Languages
-              </h4>
-              <div className="flex flex-wrap gap-1.5">
-                {details.languages.map((lang) => (
-                  <Badge key={lang} variant="outline" className="text-xs">
-                    {lang}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {details?.contributors && details.contributors.length > 0 && (
-            <>
-              <Separator />
-              <div>
-                <h4 className="text-sm font-medium mb-2 text-muted-foreground">
-                  Contributors
-                </h4>
-                <ContributorList contributors={details.contributors} />
-              </div>
-            </>
-          )}
-
           <div className="space-y-2">
             <h3 className="font-semibold flex items-center gap-1.5">
               <AlertCircle className="h-4 w-4" /> Open Issues (
