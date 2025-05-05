@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, Role } from "@prisma/client"
 import authConfig from "./auth.config"
 import { Adapter } from "next-auth/adapters";
 import { Resend } from 'resend';
@@ -24,11 +24,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
              if(user) {
                  const dbUser = await prisma.user.findUnique({
                      where: { id: user.id },
-                     select: { username: true, githubId: true }
+                     select: { username: true, githubId: true, role: true }
                  });
                  token.id = user.id;
                  token.username = dbUser?.username;
                  token.githubId = dbUser?.githubId;
+                 token.role = dbUser?.role;
 
                  // Send welcome email on sign up
                  if (trigger === "signUp" && user.email) {
@@ -58,6 +59,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             session.user.id = token.id as string;
             session.user.username = token.username as string | null;
             session.user.githubId = token.githubId as string | null;
+            session.user.role = token.role as Role;
             // Keep default fields (name, email, image) populated by NextAuth default behavior
           }
           return session;
