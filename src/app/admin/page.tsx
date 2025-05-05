@@ -1,12 +1,34 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
-import { Users, Ban, MessageSquare } from "lucide-react";
+import {
+  Users,
+  Ban,
+  MessageSquare,
+  FolderGit2,
+  UsersRound,
+  Group,
+} from "lucide-react";
+import { ConnectionStatus, ProjectMembershipStatus } from "@prisma/client";
 
 export default async function AdminDashboard() {
-  const [totalUsers, blockedUsers, totalFeedback] = await Promise.all([
+  const [
+    totalUsers,
+    blockedUsers,
+    totalFeedback,
+    totalProjects,
+    totalConnections,
+    multiMemberProjects,
+  ] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { status: "BLOCKED" } }),
     prisma.feedback.count(),
+    prisma.project.count(),
+    prisma.connection.count({ where: { status: ConnectionStatus.ACCEPTED } }),
+    prisma.project.count({
+      where: {
+        members: { some: { status: ProjectMembershipStatus.ACCEPTED } },
+      },
+    }),
   ]);
 
   const stats = [
@@ -27,6 +49,24 @@ export default async function AdminDashboard() {
       value: totalFeedback,
       icon: MessageSquare,
       description: "Total feedback received",
+    },
+    {
+      title: "Total Projects",
+      value: totalProjects,
+      icon: FolderGit2,
+      description: "Total projects created",
+    },
+    {
+      title: "Active Connections",
+      value: totalConnections,
+      icon: UsersRound,
+      description: "Total accepted user connections",
+    },
+    {
+      title: "Multi-Member Projects",
+      value: multiMemberProjects,
+      icon: Group,
+      description: "Projects with >1 accepted member",
     },
   ];
 

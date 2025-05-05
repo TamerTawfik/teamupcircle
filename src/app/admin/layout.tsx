@@ -11,6 +11,7 @@ import {
   MessageSquare,
   Menu,
   LogOut,
+  FolderGit2,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,11 @@ const sidebarItems = [
     title: "Blocked Users",
     href: "/admin/blocked",
     icon: Ban,
+  },
+  {
+    title: "Projects",
+    href: "/admin/projects",
+    icon: FolderGit2,
   },
   {
     title: "Feedback",
