@@ -4,6 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { ConnectionStatus, NotificationType } from "@prisma/client";
+import { Resend } from "resend";
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'noreply@teamupcircle.com';
 
 const MAX_DAILY_REQUESTS = 50;
 const REQUEST_WINDOW_HOURS = 24;
@@ -74,6 +78,9 @@ export async function sendConnectionRequest(targetUserId: string) {
       select: {
         lastConnectionRequest: true,
         connectionRequestCount: true,
+        email: true,
+        name: true,
+        username: true,
       },
     });
 
@@ -91,8 +98,18 @@ export async function sendConnectionRequest(targetUserId: string) {
     // Check target user's privacy settings
     const targetUser = await prisma.user.findUnique({
       where: { id: targetUserId },
-      include: { privacySettings: true },
+      select: {
+        id: true,
+        email: true,
+        privacySettings: {
+          select: { autoDeclineRequests: true }
+        },
+      },
     });
+
+    if (!targetUser || !targetUser.email) {
+      return { error: "Target user not found or missing email" };
+    }
 
     if (targetUser?.privacySettings?.autoDeclineRequests) {
       return { error: "User is not accepting connection requests at this time" };
@@ -116,6 +133,21 @@ export async function sendConnectionRequest(targetUserId: string) {
         metadata: { connectionId: connection.id },
       },
     });
+
+    // Send email notification for connection request
+    if (resend && targetUser.email) {
+      try {
+        await resend.emails.send({
+          from: FROM_EMAIL,
+          to: targetUser.email,
+          subject: "New Connection Request on TeamUpCircle",
+          html: `<p>${session.user.name || session.user.username} sent you a connection request on TeamUpCircle.</p><p><a href="https://teamupcircle.com/connections/">View request</a></p>`,
+        });
+      } catch (emailError) {
+        console.error("Resend - Error sending connection request email:", emailError);
+        // Don't fail the whole operation, just log the email error
+      }
+    }
 
     // Update rate limiting counters
     await prisma.user.update({
@@ -145,7 +177,19 @@ export async function respondToConnectionRequest(connectionId: string, accept: b
   try {
     const connection = await prisma.connection.findUnique({
       where: { id: connectionId },
-      include: { sender: true },
+      select: {
+        id: true,
+        receiverId: true,
+        senderId: true,
+        sender: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            username: true,
+          }
+        }
+      },
     });
 
     if (!connection) {
@@ -172,6 +216,21 @@ export async function respondToConnectionRequest(connectionId: string, accept: b
         metadata: { connectionId },
       },
     });
+
+    // Send email notification if accepted
+    if (accept && resend && connection.sender.email) {
+      try {
+        await resend.emails.send({
+          from: FROM_EMAIL,
+          to: connection.sender.email,
+          subject: "Your Connection Request was Accepted!",
+          html: `<p>${session.user.name || session.user.username} accepted your connection request on TeamUpCircle.</p><p><a href="https://teamupcircle.com/connections/">View connections</a></p>`,
+        });
+      } catch (emailError) {
+        console.error("Resend - Error sending connection accepted email:", emailError);
+        // Don't fail the whole operation, just log the email error
+      }
+    }
 
     revalidatePath("/connections");
     return { success: true };

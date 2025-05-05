@@ -6,6 +6,10 @@ import { auth } from '@/auth';
 import { NotificationType, ProjectMembershipStatus, User } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { Prisma } from '@prisma/client';
+import { Resend } from 'resend';
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'noreply@teamupcircle.com';
 
 // Define state shape for useFormState (Join Project)
 export type JoinProjectState = {
@@ -56,7 +60,11 @@ export async function requestToJoinProject(
         // Find the project and its owner
         const project = await prisma.project.findUnique({
             where: { id: projectId },
-            select: { ownerId: true, name: true }
+            select: { 
+                ownerId: true, 
+                name: true, 
+                owner: { select: { email: true } } // Select owner's email
+            }
         });
 
         if (!project) {
@@ -146,6 +154,20 @@ export async function requestToJoinProject(
                     }
                 });
 
+                // Send email notification to project owner
+                if (resend && project.owner?.email) {
+                    try {
+                        await resend.emails.send({
+                            from: FROM_EMAIL,
+                            to: project.owner.email,
+                            subject: `Project Join Request: ${project.name}`,
+                            html: `<p>${session.user.name || session.user.username} requested to join your project "${project.name}" on Teamup Circle.</p><p><a href="https://teamupcircle.com/my-projects">View Request</a></p>`,
+                        });
+                    } catch (emailError) {
+                        console.error("Resend - Error sending project join request email:", emailError);
+                    }
+                }
+
             } else {
                  console.log("Existing unread join request notification found, not sending another.");
             }
@@ -179,9 +201,13 @@ export async function acceptJoinRequest(
         // 1. Find the membership request and verify the current user is the project owner
         const membership = await prisma.projectMember.findUnique({
             where: { id: projectMemberId },
-            include: {
-                project: { select: { ownerId: true, name: true } }, // Get project owner ID and name
-                user: { select: { name: true, username: true, id: true } } // Get requester details
+            select: {
+                id: true,
+                userId: true,
+                projectId: true,
+                status: true,
+                project: { select: { ownerId: true, name: true } },
+                user: { select: { name: true, username: true, id: true, email: true } } // Select requester's email
             }
         });
 
@@ -232,6 +258,20 @@ export async function acceptJoinRequest(
                 }
             });
 
+            // Send email notification to the requester
+            if (resend && membership.user.email) {
+                try {
+                    await resend.emails.send({
+                        from: FROM_EMAIL,
+                        to: membership.user.email,
+                        subject: `Project Join Request Accepted: ${membership.project.name}`,
+                        html: `<p>Your request to join the project "${membership.project.name}" on Teamup Circle has been accepted!</p><p><a href="https://teamupcircle.com/my-projects">View Project</a></p>`,
+                    });
+                } catch (emailError) {
+                    console.error("Resend - Error sending project join accepted email:", emailError);
+                }
+            }
+
         } catch (notificationError) {
             console.error("Failed to delete/create notification:", notificationError);
             // Don't fail the whole operation if notification handling fails
@@ -270,9 +310,13 @@ export async function declineJoinRequest(
         // 1. Find the membership request and verify ownership
         const membership = await prisma.projectMember.findUnique({
             where: { id: projectMemberId },
-            include: {
-                project: { select: { ownerId: true, name: true } }, // Get project owner ID and name
-                user: { select: { name: true, username: true, id: true } } // Get requester details
+            select: {
+                id: true,
+                userId: true,
+                projectId: true,
+                status: true,
+                project: { select: { ownerId: true, name: true } },
+                user: { select: { name: true, username: true, id: true, email: true } } // Select requester's email
             }
         });
 
@@ -370,7 +414,6 @@ export async function getProjectMembers(
                 },
             },
             orderBy: {
-                // Optionally order by join date or username
                 user: { name: "asc" },
             },
         });
@@ -399,9 +442,13 @@ export async function removeProjectMember(
         // 1. Find the membership record and the associated project/user
         const membership = await prisma.projectMember.findUnique({
             where: { id: projectMemberId },
-            include: {
+            select: {
+                id: true,
+                userId: true,
+                projectId: true,
+                status: true,
                 project: { select: { ownerId: true, name: true } },
-                user: { select: { id: true, name: true, username: true } },
+                user: { select: { id: true, name: true, username: true, email: true } },
             },
         });
 
