@@ -3,9 +3,12 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { PrismaClient } from "@prisma/client"
 import authConfig from "./auth.config"
 import { Adapter } from "next-auth/adapters";
+import { Resend } from 'resend';
+import { EmailTemplate } from '@/components/email-template';
 
 
 const prisma = new PrismaClient()
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     session: {
@@ -26,6 +29,22 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                  token.id = user.id;
                  token.username = dbUser?.username;
                  token.githubId = dbUser?.githubId;
+
+                 // Send welcome email on sign up
+                 if (trigger === "signUp" && user.email) {
+                    const firstName = user.name?.split(' ')[0] || 'there';
+                    try {
+                      await resend.emails.send({
+                        from: 'Teamup-Circle <no-reply@teamupcircle.com>',
+                        to: [user.email],
+                        subject: 'Welcome to Teamup Circle!',
+                        react: await EmailTemplate({ firstName: firstName }), 
+                      });
+                      console.log(`Welcome email sent to ${user.email}`);
+                    } catch (error) {
+                      console.error("Failed to send welcome email:", error);
+                    }
+                 }
              }
            }
           // On subsequent calls, token exists, return it
