@@ -306,9 +306,17 @@ export async function getConnections(userId: string) {
             image: true,
             githubId: true,
             location: true,
+            createdAt: true,
             collaborationStyles: {
-              include: {
+              select: {
+                id: true,
+                availabilityStatus: true,
+                hoursPerWeek: true,
+                teamSize: true,
+                updatedAt: true,
                 teamRoles: true,
+                techs: true,
+                projectDomains: true,
               },
             },
           },
@@ -321,9 +329,17 @@ export async function getConnections(userId: string) {
             image: true,
             githubId: true,
             location: true,
+            createdAt: true,
             collaborationStyles: {
-              include: {
+              select: {
+                id: true,
+                availabilityStatus: true,
+                hoursPerWeek: true,
+                teamSize: true,
+                updatedAt: true,
                 teamRoles: true,
+                techs: true,
+                projectDomains: true,
               },
             },
           },

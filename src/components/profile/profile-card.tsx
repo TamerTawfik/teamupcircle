@@ -23,7 +23,7 @@ export function ProfileCard({ profile }: { profile: ProfileWithGitHub }) {
             {profile.name?.[0] || profile.username?.[0] || "U"}
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col">
+        <div className="flex flex-col min-h-[48px] justify-center">
           <h3 className="text-lg font-semibold">
             {profile.name || profile.username}
           </h3>
@@ -36,7 +36,7 @@ export function ProfileCard({ profile }: { profile: ProfileWithGitHub }) {
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 min-h-[96px]">
         {profile.collaborationStyles && (
           <div className="space-y-3">
             {profile.collaborationStyles.teamRoles.length > 0 && (

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Suspense } from "react";
 import { getPendingRequests, getConnections } from "@/app/actions/connections";
 import { ConnectionsList } from "@/components/connections-list";
@@ -32,7 +33,7 @@ export default async function ConnectionsPage() {
 
             <main>
               <Suspense fallback={<Skeleton className="h-[400px]" />}>
-                <ConnectionsList connections={connections} />
+                <ConnectionsList connections={connections as any} />
               </Suspense>
             </main>
           </div>

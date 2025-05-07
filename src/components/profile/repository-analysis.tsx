@@ -684,12 +684,12 @@ export function RepositoryAnalysis({ username }: RepositoryAnalysisProps) {
                             day.count === 0
                               ? "hsl(var(--muted) / 0.3)"
                               : day.count < 3
-                              ? "#9be9a8"
-                              : day.count < 7
-                              ? "#40c463"
-                              : day.count < 12
-                              ? "#30a14e"
-                              : "#216e39",
+                                ? "#9be9a8"
+                                : day.count < 7
+                                  ? "#40c463"
+                                  : day.count < 12
+                                    ? "#30a14e"
+                                    : "#216e39",
                         }}
                       />
                     </TooltipTrigger>
@@ -954,7 +954,7 @@ export function RepositoryAnalysis({ username }: RepositoryAnalysisProps) {
 
   return (
     <TooltipProvider>
-      <Card className="w-full border-0">
+      <Card className="w-full border-0 bg-background">
         <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <div>
             <CardTitle className="text-xl">Repositories Analysis</CardTitle>

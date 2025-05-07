@@ -198,39 +198,48 @@ export function ProfileFilterDrawer({
 
   return (
     <Drawer direction="right" open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="h-full max-w-sm ml-auto p-4">
-        <DrawerHeader>
-          <DrawerTitle>Filter Profiles</DrawerTitle>
-          <DrawerDescription>
+      <DrawerContent className="h-full max-w-sm ml-auto p-3">
+        <DrawerHeader className="p-4 pt-6">
+          <DrawerTitle className="text-lg">Filter Profiles</DrawerTitle>
+          <DrawerDescription className="text-sm">
             Refine the list of developer profiles.
           </DrawerDescription>
         </DrawerHeader>
-        <div className="space-y-4 overflow-y-auto p-1 flex-grow">
+        <div className="space-y-3 overflow-y-auto p-4 flex-grow">
           {/* User Filters */}
           <div>
-            <Label htmlFor="location">Location</Label>
+            <Label htmlFor="location" className="text-sm font-medium">
+              Location
+            </Label>
             <Input
               id="location"
               name="location"
               value={internalFilters.location || ""}
               onChange={handleInputChange}
               placeholder="Search by country or city..."
+              className="h-9 text-sm mt-1"
             />
           </div>
           <div>
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username" className="text-sm font-medium">
+              Username
+            </Label>
             <Input
               id="username"
               name="username"
               value={internalFilters.username || ""}
               onChange={handleInputChange}
               placeholder="Search by GitHub username..."
+              className="h-9 text-sm mt-1"
             />
           </div>
           {/* Collaboration Style Filters */}
           <div>
-            <Label htmlFor="techStack">Tech Stack</Label>
+            <Label htmlFor="techStack" className="text-sm font-medium">
+              Tech Stack
+            </Label>
             <MultipleSelector
+              className="mt-1 text-sm" // Apply to wrapper for potential font inheritance
               options={techOptions} // Use constant options
               value={internalFilters.techStack ?? []}
               onChange={(selected) =>
@@ -241,8 +250,11 @@ export function ProfileFilterDrawer({
             />
           </div>
           <div>
-            <Label htmlFor="projectDomains">Project Domains</Label>
+            <Label htmlFor="projectDomains" className="text-sm font-medium">
+              Project Domains
+            </Label>
             <MultipleSelector
+              className="mt-1 text-sm"
               options={domainOptions} // Use constant options
               value={internalFilters.projectDomains ?? []}
               onChange={(selected) =>
@@ -253,8 +265,11 @@ export function ProfileFilterDrawer({
             />
           </div>
           <div>
-            <Label htmlFor="teamRoles">Team Roles</Label>
+            <Label htmlFor="teamRoles" className="text-sm font-medium">
+              Team Roles
+            </Label>
             <MultipleSelector
+              className="mt-1 text-sm"
               options={roleOptions} // Use constant options
               value={internalFilters.teamRoles ?? []}
               onChange={(selected) =>
@@ -265,7 +280,9 @@ export function ProfileFilterDrawer({
             />
           </div>
           <div>
-            <Label htmlFor="hoursPerWeek">Min. Hours per Week</Label>
+            <Label htmlFor="hoursPerWeek" className="text-sm font-medium">
+              Min. Hours per Week
+            </Label>
             <Input
               id="hoursPerWeek"
               name="hoursPerWeek"
@@ -274,10 +291,13 @@ export function ProfileFilterDrawer({
               value={internalFilters.hoursPerWeek ?? ""}
               onChange={handleNumberInputChange}
               placeholder="e.g., 10"
+              className="h-9 text-sm mt-1"
             />
           </div>
           <div>
-            <Label htmlFor="availabilityStatus">Availability Status</Label>
+            <Label htmlFor="availabilityStatus" className="text-sm font-medium">
+              Availability Status
+            </Label>
             <Select
               name="availabilityStatus"
               value={internalFilters.availabilityStatus || ""}
@@ -285,13 +305,18 @@ export function ProfileFilterDrawer({
                 handleSelectChange("availabilityStatus", value)
               }
             >
-              <SelectTrigger id="availabilityStatus">
+              <SelectTrigger
+                id="availabilityStatus"
+                className="h-9 text-sm mt-1"
+              >
                 <SelectValue placeholder="Any Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">Any Status</SelectItem>
+                <SelectItem value="ALL" className="text-sm">
+                  Any Status
+                </SelectItem>
                 {availabilityStatuses.map((status) => (
-                  <SelectItem key={status} value={status}>
+                  <SelectItem key={status} value={status} className="text-sm">
                     {status.replace("_", " ")}
                   </SelectItem>
                 ))}
@@ -299,19 +324,23 @@ export function ProfileFilterDrawer({
             </Select>
           </div>
           <div>
-            <Label htmlFor="teamSize">Preferred Team Size</Label>
+            <Label htmlFor="teamSize" className="text-sm font-medium">
+              Preferred Team Size
+            </Label>
             <Select
               name="teamSize"
               value={internalFilters.teamSize || ""}
               onValueChange={(value) => handleSelectChange("teamSize", value)}
             >
-              <SelectTrigger id="teamSize">
+              <SelectTrigger id="teamSize" className="h-9 text-sm mt-1">
                 <SelectValue placeholder="Any Size" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">Any Size</SelectItem>
+                <SelectItem value="ALL" className="text-sm">
+                  Any Size
+                </SelectItem>
                 {teamSizes.map((size) => (
-                  <SelectItem key={size} value={size}>
+                  <SelectItem key={size} value={size} className="text-sm">
                     {size.replace("_", " ")}
                   </SelectItem>
                 ))}
@@ -319,13 +348,22 @@ export function ProfileFilterDrawer({
             </Select>
           </div>
         </div>
-        <DrawerFooter className="mt-auto">
-          <Button onClick={handleApply}>Apply Filters</Button>
-          <Button variant="outline" onClick={handleClear}>
+        <DrawerFooter className="mt-auto pt-4 pb-4 pr-4 pl-4 border-t">
+          <Button onClick={handleApply} size="sm" className="text-sm">
+            Apply Filters
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleClear}
+            size="sm"
+            className="text-sm"
+          >
             Clear All Filters
           </Button>
           <DrawerClose asChild>
-            <Button variant="ghost">Cancel</Button>
+            <Button variant="ghost" size="sm" className="text-sm">
+              Cancel
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
