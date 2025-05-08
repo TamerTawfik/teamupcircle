@@ -153,7 +153,7 @@ export function MyProjectsClient({
   return (
     <div className="flex min-h-screen w-full flex-col">
       <div className="flex flex-col sm:gap-4 sm:py-4 px-4">
-        <div className="flex justify-end mb-4 mt-4">
+        <div className="flex justify-start mb-4 mt-4">
           <Button
             variant="outline"
             onClick={() => setShowFilters(!showFilters)}

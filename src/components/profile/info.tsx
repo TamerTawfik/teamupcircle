@@ -22,7 +22,7 @@ export async function ProfileInfo({
   return (
     <div className="flex flex-col md:flex-row items-start gap-6 p-6 mb-6">
       <div className="relative">
-        <Avatar className="h-32 w-32">
+        <Avatar className="h-24 w-24">
           <AvatarImage src={profile.avatar_url} alt={profile.login} />
           <AvatarFallback>
             {profile.bio &&
@@ -53,18 +53,18 @@ export async function ProfileInfo({
         </div>
         <div className="py-4">
           {profile.bio && (
-            <p className="text-sm text-muted-foreground">{profile.bio}</p>
+            <p className="text-sm text-foreground">{profile.bio}</p>
           )}
         </div>
 
         <div className="flex flex-wrap gap-4 text-sm">
           {profile.location && (
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-2 text-foreground">
               <MapPin className="h-4 w-4" />
               <span>{profile.location}</span>
             </div>
           )}
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2 text-foreground">
             <Calendar className="h-4 w-4" />
             <span>
               Joined GitHub{" "}
@@ -77,17 +77,17 @@ export async function ProfileInfo({
 
         <div className="flex gap-4 pt-2 text-sm">
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-foreground" />
             <span className="font-medium">{profile.followers}</span>
-            <span className="text-muted-foreground">followers</span>
+            <span className="text-foreground">followers</span>
           </div>
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-foreground" />
             <span className="font-medium">{profile.following}</span>
-            <span className="text-muted-foreground">following</span>
+            <span className="text-foreground">following</span>
           </div>
           <div className="flex items-center gap-2">
-            <GitFork className="h-4 w-4 text-muted-foreground" />
+            <GitFork className="h-4 w-4 text-foreground" />
             <span className="font-medium">{profile.public_repos}</span>
 
             <Link
@@ -95,7 +95,7 @@ export async function ProfileInfo({
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="text-muted-foreground hover:text-foreground">
+              <span className="text-foreground hover:text-muted-foreground">
                 repositories <ExternalLink size={16} className="inline" />
               </span>
             </Link>

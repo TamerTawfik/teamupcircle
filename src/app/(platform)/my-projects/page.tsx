@@ -12,7 +12,6 @@ import { getProjectDetailsFromGitHub } from "@/app/actions/projects";
 import { CreateProjectModal } from "@/components/projects/create-project-modal";
 import { ProjectJoinRequestWithDetails } from "@/components/projects/project-join-requests";
 
-// Define the props for the page, including searchParams
 interface MyProjectsPageProps {
   searchParams?: {
     requiredRoles?: string; // Comma-separated string of roles

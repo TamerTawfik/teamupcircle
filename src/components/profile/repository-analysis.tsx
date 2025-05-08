@@ -959,7 +959,10 @@ export function RepositoryAnalysis({ username }: RepositoryAnalysisProps) {
           <div>
             <CardTitle className="text-xl">Repositories Analysis</CardTitle>
             <CardDescription>
-              Analysis for <span className="font-semibold">{username}</span>
+              Analysis for{" "}
+              <span className="font-semibold text-primary-foreground">
+                {username}
+              </span>
               {analysis?.analysisTimestamp && (
                 <span className="text-xs ml-2 text-muted-foreground">
                   (Data as of:{" "}

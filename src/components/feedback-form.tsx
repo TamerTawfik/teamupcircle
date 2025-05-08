@@ -82,11 +82,8 @@ export function FeedbackForm() {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild className="md:block">
-        <Button
-          variant="outline"
-          className="rounded-full font-normal h-[32px] p-0 px-3 text-xs text-[#878787]"
-        >
-          Alpha feedback
+        <Button className="rounded-full font-normal h-[32px] p-0 px-3 text-xs text-foreground">
+          Beta feedback
         </Button>
       </PopoverTrigger>
       <PopoverContent

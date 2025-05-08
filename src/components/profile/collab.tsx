@@ -30,7 +30,7 @@ export async function CollaborationStyleDisplay({
           <CardTitle>Collaboration Preferences</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p>No collaboration preferences set yet.</p>
+          <p className="text-sm">No collaboration preferences set yet.</p>
           <EditCollabModal>
             {isProfileOwner && (
               <Button variant="outline">
@@ -58,13 +58,13 @@ export async function CollaborationStyleDisplay({
           )}
         </EditCollabModal>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div>
             <p className="font-normal text-sm text-muted-foreground">
               Availability
             </p>
-            <p>
+            <p className="text-sm">
               {formatEnumValue(collabStyle.availabilityStatus).toLowerCase()}
             </p>
           </div>
@@ -72,13 +72,15 @@ export async function CollaborationStyleDisplay({
             <p className="font-normal text-sm text-muted-foreground">
               Hours per Week
             </p>
-            <p>{collabStyle.hoursPerWeek ?? "Not specified"}</p>
+            <p className="text-sm">
+              {collabStyle.hoursPerWeek ?? "Not specified"}
+            </p>
           </div>
           <div>
             <p className="font-normal text-sm text-muted-foreground">
-              Preferred Team Size
+              Team Size
             </p>
-            <p>{formatEnumValue(collabStyle.teamSize)}</p>
+            <p className="text-sm">{formatEnumValue(collabStyle.teamSize)}</p>
           </div>
         </div>
 

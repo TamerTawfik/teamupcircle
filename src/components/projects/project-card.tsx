@@ -61,10 +61,7 @@ export function ProjectCard({ project, userId, onClick }: ProjectCardProps) {
       <Card className="h-full flex flex-col transition-all duration-200 group-hover:shadow-lg group-hover:border-primary/50">
         <CardHeader className="pb-3">
           {" "}
-          <CardTitle
-            className="text-lg truncate group-hover:text-primary"
-            title={project.name}
-          >
+          <CardTitle className="text-lg truncate" title={project.name}>
             {project.name}
           </CardTitle>
           {project.isBeginnerFriendly && (
@@ -105,7 +102,7 @@ export function ProjectCard({ project, userId, onClick }: ProjectCardProps) {
                 {project.requiredRoles.slice(0, 3).map((role) => (
                   <Badge
                     key={role}
-                    variant="outline"
+                    variant="default"
                     className="text-xs px-1.5 py-0.5 font-normal"
                   >
                     {role}
