@@ -44,7 +44,7 @@ export async function CollaborationStyleDisplay({
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto border-none">
+    <Card className="w-full max-w-2xl mx-auto border-none bg-transparent shadow-none">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>Collaboration Preferences</CardTitle>
@@ -61,18 +61,23 @@ export async function CollaborationStyleDisplay({
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div>
-            <p className="font-normal text-sm text-muted-foreground">
-              Availability
-            </p>
-            <p className="text-sm">
-              {formatEnumValue(collabStyle.availabilityStatus).toLowerCase()}
-            </p>
+            <p className="font-normal text-sm text-muted-foreground">Status</p>
+            <Badge
+              variant={
+                collabStyle.availabilityStatus === "AVAILABLE"
+                  ? "default"
+                  : "secondary"
+              }
+              className="text-xs"
+            >
+              {collabStyle.availabilityStatus.replace("_", " ").toLowerCase()}
+            </Badge>
           </div>
           <div>
             <p className="font-normal text-sm text-muted-foreground">
               Hours per Week
             </p>
-            <p className="text-sm">
+            <p className="text-xs font-semibold">
               {collabStyle.hoursPerWeek ?? "Not specified"}
             </p>
           </div>
@@ -80,7 +85,9 @@ export async function CollaborationStyleDisplay({
             <p className="font-normal text-sm text-muted-foreground">
               Team Size
             </p>
-            <p className="text-sm">{formatEnumValue(collabStyle.teamSize)}</p>
+            <p className="text-xs font-semibold">
+              {formatEnumValue(collabStyle.teamSize)}
+            </p>
           </div>
         </div>
 
