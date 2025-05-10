@@ -957,7 +957,9 @@ export function RepositoryAnalysis({ username }: RepositoryAnalysisProps) {
       <Card className="w-full border-none bg-transparent shadow-none">
         <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <div>
-            <CardTitle className="text-xl">Repositories Analysis</CardTitle>
+            <CardTitle className="font-semibold text-md">
+              Repositories Analysis
+            </CardTitle>
             <CardDescription>
               Analysis for{" "}
               <span className="font-semibold text-primary-foreground">

@@ -3,7 +3,7 @@ import { getCollaborationStyle } from "@/app/actions/collab";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit } from "lucide-react";
+import { Edit, Box, BriefcaseBusiness, GlobeLock } from "lucide-react";
 import { EditCollabModal } from "./edit-collab";
 
 interface CollabProps {
@@ -61,7 +61,9 @@ export async function CollaborationStyleDisplay({
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div>
-            <p className="font-normal text-sm text-muted-foreground">Status</p>
+            <p className="font-semibold text-xs text-muted-foreground mb-1">
+              Status
+            </p>
             <Badge
               variant={
                 collabStyle.availabilityStatus === "AVAILABLE"
@@ -74,36 +76,49 @@ export async function CollaborationStyleDisplay({
             </Badge>
           </div>
           <div>
-            <p className="font-normal text-sm text-muted-foreground">
+            <p className="font-semibold text-xs text-muted-foreground mb-1">
               Hours per Week
             </p>
-            <p className="text-xs font-semibold">
+            <Badge
+              variant="outline"
+              className="bg-popover-foreground text-background"
+            >
               {collabStyle.hoursPerWeek ?? "Not specified"}
-            </p>
+            </Badge>
           </div>
           <div>
-            <p className="font-normal text-sm text-muted-foreground">
+            <p className="font-semibold text-xs text-muted-foreground mb-1">
               Team Size
             </p>
-            <p className="text-xs font-semibold">
+            <Badge
+              variant="outline"
+              className="bg-popover-foreground text-background"
+            >
               {formatEnumValue(collabStyle.teamSize)}
-            </p>
+            </Badge>
           </div>
         </div>
 
         <div>
-          <p className="font-normal text-sm text-muted-foreground mb-2">
-            Tech Stack
-          </p>
+          <Badge
+            variant="secondary"
+            className="mb-2 bg-transparent text-muted-foreground"
+          >
+            <Box className="mr-2 h-4 w-4" /> Tech Stack
+          </Badge>
           <div className="flex flex-wrap gap-2">
             {collabStyle.techs.length > 0 ? (
               collabStyle.techs.map((tech) => (
-                <Badge key={tech.id} variant="secondary">
+                <Badge
+                  key={tech.id}
+                  variant="outline"
+                  className="bg-popover-foreground text-background"
+                >
                   {tech.name}
                 </Badge>
               ))
             ) : (
-              <p className="text-sm text-muted-foreground">
+              <p className="ml-3 text-sm text-muted-foreground">
                 No specific technologies listed.
               </p>
             )}
@@ -111,18 +126,25 @@ export async function CollaborationStyleDisplay({
         </div>
 
         <div>
-          <p className="font-normal text-sm text-muted-foreground mb-2">
-            Project Domains
-          </p>
+          <Badge
+            variant="secondary"
+            className="mb-2 bg-transparent text-muted-foreground"
+          >
+            <GlobeLock className="mr-2 h-4 w-4" /> Project Domains
+          </Badge>
           <div className="flex flex-wrap gap-2">
             {collabStyle.projectDomains.length > 0 ? (
               collabStyle.projectDomains.map((domain) => (
-                <Badge key={domain.id} variant="secondary">
+                <Badge
+                  key={domain.id}
+                  variant="outline"
+                  className="bg-popover-foreground text-background"
+                >
                   {domain.name}
                 </Badge>
               ))
             ) : (
-              <p className="text-sm text-muted-foreground">
+              <p className="ml-3 text-sm text-muted-foreground">
                 No specific project domains listed.
               </p>
             )}
@@ -130,18 +152,25 @@ export async function CollaborationStyleDisplay({
         </div>
 
         <div>
-          <p className="font-normal text-sm text-muted-foreground mb-2">
-            Team Roles
-          </p>
+          <Badge
+            variant="secondary"
+            className="mb-2 bg-transparent text-muted-foreground"
+          >
+            <BriefcaseBusiness className="mr-2 h-4 w-4" /> Team Roles
+          </Badge>
           <div className="flex flex-wrap gap-2">
             {collabStyle.teamRoles.length > 0 ? (
               collabStyle.teamRoles.map((role) => (
-                <Badge key={role.id} variant="secondary">
+                <Badge
+                  key={role.id}
+                  variant="outline"
+                  className="bg-popover-foreground text-background"
+                >
                   {role.name}
                 </Badge>
               ))
             ) : (
-              <p className="text-sm text-muted-foreground">
+              <p className="ml-3 text-sm text-muted-foreground">
                 No specific team roles listed.
               </p>
             )}

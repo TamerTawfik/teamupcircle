@@ -83,7 +83,7 @@ export function ProfileCard({ profile }: { profile: ProfileWithGitHub }) {
         )}
       </CardContent>
 
-      <CardFooter className="text-sm text-muted-foreground">
+      <CardFooter className="text-xs text-muted-foreground">
         <span className="pr-1">Updated </span>
         <span>
           {formatDistance(

@@ -59,7 +59,7 @@ export function ProjectCard({ project, userId, onClick }: ProjectCardProps) {
   return (
     <div className="block group cursor-pointer h-full" onClick={onClick}>
       <Card className="h-full flex flex-col transition-all duration-200 group-hover:shadow-lg group-hover:border-primary/50">
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-4">
           {" "}
           <CardTitle className="text-lg truncate" title={project.name}>
             {project.name}
@@ -67,7 +67,7 @@ export function ProjectCard({ project, userId, onClick }: ProjectCardProps) {
           {project.isBeginnerFriendly && (
             <Badge
               variant="secondary"
-              className="text-xs px-1.5 py-0.5 w-fit mt-1 text-green-700 border-green-300"
+              className="text-xs font-normal px-1.5 py-0.5 w-fit mt-2 text-green-700 border-green-300"
             >
               Beginner Friendly
             </Badge>
@@ -93,8 +93,8 @@ export function ProjectCard({ project, userId, onClick }: ProjectCardProps) {
           </div>
           {/* Required Roles - Conditionally render */}
           {project.requiredRoles && project.requiredRoles.length > 0 && (
-            <div className="flex flex-col gap-1 pt-2 border-t border-border/50 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1 font-medium">
+            <div className="flex flex-col gap-1 pt-3 border-t border-border/50 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1.5 font-medium">
                 <Tag className="h-3.5 w-3.5" />
                 <span>Roles Needed:</span>
               </div>
@@ -120,7 +120,7 @@ export function ProjectCard({ project, userId, onClick }: ProjectCardProps) {
             </div>
           )}
           {/* GitHub Stats & License  */}
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 pt-2 border-t border-border/50 text-xs text-muted-foreground">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 pt-3 border-t border-border/50 text-xs text-muted-foreground">
             <InfoItem icon={Star} value={project.stars} label="GitHub Stars" />
             <InfoItem
               icon={GitFork}
@@ -135,7 +135,7 @@ export function ProjectCard({ project, userId, onClick }: ProjectCardProps) {
             <InfoItem icon={Scale} value={licenseName} label="License" />
           </div>
           {/* Footer Info (Members & Owner) */}
-          <div className="flex flex-wrap justify-between items-center gap-2 pt-2 border-t border-border/50 text-xs text-muted-foreground">
+          <div className="flex flex-wrap justify-between items-center gap-2 pt-3 border-t border-border/50 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Users className="h-3.5 w-3.5" />
               <span>

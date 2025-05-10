@@ -23,8 +23,8 @@ export function CreateProjectModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <PlusCircle className="mr-2 h-4 w-4" /> Create New Project
+        <Button variant="outline" className="text-xs font-medium bg-popover">
+          <PlusCircle className="mr-2 h-2 w-2" /> Create New Project
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[625px]">
