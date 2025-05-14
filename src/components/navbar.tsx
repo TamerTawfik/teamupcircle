@@ -39,7 +39,7 @@ export function Navbar() {
       <div className="container">
         <div
           className={cn(
-            "flex justify-between border border-transparent items-center p-4 -mx-4 rounded-full transition-colors",
+            "flex justify-between border border-transparent items-center p-4 md:-mx-10 rounded-xl transition-colors",
             isScrolled
               ? "bg-background/90 border-foreground/10"
               : "bg-transparent"
@@ -98,7 +98,7 @@ export function Navbar() {
                     href={siteConfig.links.github}
                     className="block px-4 py-3 text-foreground hover:bg-foreground/5"
                   >
-                    GitHub
+                    Star us on GitHub
                   </Link>
                 </div>
               </div>
