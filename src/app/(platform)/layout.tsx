@@ -6,6 +6,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Header } from "@/components/header";
+import { Analytics } from "@vercel/analytics/next";
 
 export default async function Platformlayout({
   children,
@@ -26,6 +27,7 @@ export default async function Platformlayout({
           <Header />
         </header>
         {children}
+        <Analytics />
       </SidebarInset>
     </SidebarProvider>
   );
