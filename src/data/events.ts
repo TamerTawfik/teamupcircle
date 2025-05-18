@@ -1,0 +1,70 @@
+import { Events } from "@/types/events";
+
+export const events: Events = [
+  {
+    year: 2025,
+    periodType: "Q",
+    periodNumber: 1,
+    isChecked: true,
+    events: [
+      { title: "Setup Project", isChecked: true, type: "Development" },
+      { title: "Implement GitHub OAuth Flow", isChecked: true, type: "Development" },
+      { title: "Build Profile Page", isChecked: true, type: "Development" },
+      { title: "Add Connect Feature", isChecked: true, type: "Development" },
+      { title: "Profile List page", isChecked: true, type: "Development" },
+      { title: "Add Message Feature", isChecked: true, type: "Development" },
+      { title: "Add Feedback Feature", isChecked: true, type: "Development" },
+    ],
+  },
+  {
+    year: 2025,
+    periodType: "Q",
+    periodNumber: 2,
+    isChecked: false,
+    events: [
+      { title: "Add Admin Dashboard", isChecked: true, type: "Development" },
+      { title: "Realtime messages Feature", isChecked: true, type: "Development" },
+      { title: "Profiles filtering Feature", isChecked: true, type: "Development" },
+      { title: "Move to GitHub GraphQL API", isChecked: true, type: "Deployment" },
+      { title: "Project Creation", isChecked: true, type: "Deployment" },
+      { title: "Project Joining Flow", isChecked: true, type: "Deployment" },
+      { title: "Add Email Notifications", isChecked: true, type: "Deployment" },
+      { title: "Add Theme", isChecked: true, type: "Deployment" },
+      { title: "Redesign the landing page", isChecked: true, type: "Deployment" },
+      { title: "Add Web Analytics", isChecked: true, type: "Marketing" },
+      { title: "Beta Testing", isChecked: false, type: "Deployment" },
+    ],
+  },
+  {
+    year: 2025,
+    periodType: "Q",
+    periodNumber: 3,
+    isChecked: false,
+    events: [
+      { title: "Event Creation & Management", isChecked: false, type: "Development" },
+      { title: "Event Discovery & Browsing", isChecked: false, type: "Development" },
+      { title: "RSVP & Participation", isChecked: false, type: "Deployment" },
+      { title: "Event Dashboard", isChecked: false, type: "Development" },
+      { title: "Team Creation & Management", isChecked: false, type: "Development" },
+      { title: "Team Collaboration", isChecked: false, type: "Development" },
+      { title: "Team Discovery", isChecked: false, type: "Development" },
+      { title: "Team Joining Flow", isChecked: false, type: "Development" },
+      { title: "Core Matching Engine", isChecked: false, type: "Development" },
+      { title: "Project-Developer Matching", isChecked: false, type: "Development" },
+      { title: "Event-Developer Matching", isChecked: false, type: "Development" },
+      { title: "Team Formation Matching", isChecked: false, type: "Development" },
+      { title: "Developer-to-Project/Event Matching", isChecked: false, type: "Development" },
+      { title: "Matching UI & Experience", isChecked: false, type: "Development" },
+    ],
+  },
+  {
+    year: 2025,
+    periodType: "Q",
+    periodNumber: 4,
+    isChecked: false,
+    events: [
+      { title: "To be Planned", isChecked: false, type: "Marketing" },
+    ],
+  },
+  
+];

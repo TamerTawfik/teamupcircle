@@ -1,25 +1,24 @@
-import type { Metadata } from "next";
+"use client";
+
 import { Navbar } from "@/components/navbar";
 import { Hero } from "@/components/sections/hero";
-import { WhySection } from "@/components/sections/features";
-import { FeatureGrid } from "@/components/sections/features/feature-grid";
-import { CTA } from "@/components/sections/cta";
+import { CTA } from "@/components/sections/CTA";
+import { GithubCTA } from "@/components/sections/github-cta";
 import { Footer } from "@/components/sections/footer";
-import { siteConfig } from "@/config/site";
+import content from "@/components/sections/content";
+import FeaturesSection from "@/components/sections/features";
+import { Timeline } from "@/components/sections/timeline";
 
-export const metadata: Metadata = {
-  title: `${siteConfig.name} | ${siteConfig.description}`,
-};
-
-export default async function Home() {
+export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="bg-white dark:bg-black">
+      <main>
         <Hero />
-        <WhySection />
-        <FeatureGrid className="flex flex-col items-center max-w-5xl mx-auto" />
-        <CTA className="flex flex-col items-center max-w-5xl mx-auto mt-40 mb-28" />
+        <CTA />
+        <FeaturesSection {...content.featuresSection} />
+        <Timeline />
+        <GithubCTA className="flex flex-col items-center max-w-5xl mx-auto mt-40 mb-28" />
         <Footer />
       </main>
     </>

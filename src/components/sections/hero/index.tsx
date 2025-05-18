@@ -6,7 +6,7 @@ import { WordAnimation } from "./word-animation";
 
 export function Hero() {
   return (
-    <div className="relative mt-10">
+    <div className="relative mt-20">
       <SectionContainer className="pt-8 pb-10 md:pt-16 overflow-hidden">
         <div className="relative">
           <div className="mx-auto">

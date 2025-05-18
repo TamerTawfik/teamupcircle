@@ -24,6 +24,17 @@ export default {
   				DEFAULT: 'hsl(var(--primary))',
   				foreground: 'hsl(var(--primary-foreground))'
   			},
+			brand: {
+				link: 'hsl(var(--brand-link))',
+				button: 'hsl(var(--brand-button))',
+				DEFAULT: 'hsl(var(--brand-default))',
+				'600': 'hsl(var(--brand-600))',
+				'500': 'hsl(var(--brand-500))',
+				'400': 'hsl(var(--brand-400))',
+				'300': 'hsl(var(--brand-300))',
+				'200': 'hsl(var(--brand-200))',
+
+			},
   			secondary: {
   				DEFAULT: 'hsl(var(--secondary))',
   				foreground: 'hsl(var(--secondary-foreground))'
