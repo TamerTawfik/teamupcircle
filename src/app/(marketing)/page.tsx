@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/navbar";
 import { Hero } from "@/components/sections/hero";
-import { CTA } from "@/components/sections/CTA";
+import { CTA } from "@/components/sections/cta";
 import { GithubCTA } from "@/components/sections/github-cta";
 import { Footer } from "@/components/sections/footer";
 import content from "@/components/sections/content";
