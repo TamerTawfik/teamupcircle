@@ -12,15 +12,9 @@ import { getProjectDetailsFromGitHub } from "@/app/actions/projects";
 import { CreateProjectModal } from "@/components/projects/create-project-modal";
 import { ProjectJoinRequestWithDetails } from "@/components/projects/project-join-requests";
 
-interface MyProjectsPageProps {
-  searchParams?: {
-    requiredRoles?: string; // Comma-separated string of roles
-  };
-}
-
-export default async function MyProjectsPage({
-  searchParams,
-}: MyProjectsPageProps) {
+export default async function MyProjectsPage(props: {
+  searchParams?: Promise<{ [key: string]: string | undefined }>;
+}) {
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -34,6 +28,7 @@ export default async function MyProjectsPage({
   const userId = session.user.id;
 
   // Parse search params
+  const searchParams = await props.searchParams;
   const selectedRoles =
     searchParams?.requiredRoles?.split(",").filter(Boolean) ?? [];
 

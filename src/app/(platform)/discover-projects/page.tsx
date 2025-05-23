@@ -11,20 +11,14 @@ import {
 import { getProjectDetailsFromGitHub } from "@/app/actions/projects";
 import { ProjectJoinRequestWithDetails } from "@/components/projects/project-join-requests";
 
-// Define the props for the page, including searchParams
-interface DiscoverProjectsPageProps {
-  searchParams?: {
-    requiredRoles?: string; // Comma-separated string of roles
-  };
-}
-
-export default async function DiscoverProjectsPage({
-  searchParams,
-}: DiscoverProjectsPageProps) {
+export default async function DiscoverProjectsPage(props: {
+  searchParams?: Promise<{ [key: string]: string | undefined }>;
+}) {
   const session = await auth();
   const userId = session?.user?.id;
 
   // Parse search params
+  const searchParams = await props.searchParams;
   const selectedRoles =
     searchParams?.requiredRoles?.split(",").filter(Boolean) ?? [];
 

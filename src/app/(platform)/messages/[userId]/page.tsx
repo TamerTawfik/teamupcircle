@@ -3,14 +3,10 @@ import { MessageThread } from "@/components/messages/message-thread";
 import { MessageSkeleton } from "@/components/messages/message-skeleton";
 import { Suspense } from "react";
 
-interface MessagePageProps {
-  params: {
-    userId: string;
-  };
-}
-
-export default async function MessagePage({ params }: MessagePageProps) {
-  const { userId } = await params;
+export default async function MessagePage(props: {
+  params: Promise<{ userId: string }>;
+}) {
+  const { userId } = await props.params;
 
   return (
     <MessageLayout>

@@ -10,15 +10,11 @@ import { CollaborationStyleDisplay } from "@/components/profile/collab";
 import { getConnectionStatus } from "@/app/actions/connections";
 import { auth } from "@/auth";
 
-interface PageProps {
-  params: {
-    username: string;
-  };
-}
-
 export async function generateMetadata({
   params,
-}: PageProps): Promise<Metadata> {
+}: {
+  params: Promise<{ username: string }>;
+}): Promise<Metadata> {
   try {
     const { username } = await params;
     const user = await getGithubUser(username);
@@ -34,7 +30,11 @@ export async function generateMetadata({
   }
 }
 
-export default async function MemberProfile({ params }: PageProps) {
+export default async function MemberProfile({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}) {
   const { username } = await params;
   const userProfile = await getCurrentUser({ username: username });
   const session = await auth();

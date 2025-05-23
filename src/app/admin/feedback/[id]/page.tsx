@@ -16,13 +16,12 @@ import {
 import Link from "next/link";
 import { updateFeedbackStatus } from "@/app/actions/admin";
 
-export default async function FeedbackDetailsPage({
-  params,
-}: {
-  params: { id: string };
+export default async function FeedbackDetailsPage(props: {
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await props.params;
   const feedback = await prisma.feedback.findUnique({
-    where: { id: params.id },
+    where: { id: id },
     include: { user: true },
   });
 

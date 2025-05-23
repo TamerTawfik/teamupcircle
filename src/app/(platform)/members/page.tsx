@@ -59,15 +59,16 @@ interface ProfilesPageProps {
   };
 }
 
-export default async function ProfilesPage({
-  searchParams,
-}: ProfilesPageProps) {
+export default async function ProfilesPage(props: {
+  searchParams?: Promise<{ [key: string]: string | undefined }>;
+}) {
   // Extract page param explicitly
-  const pageParam = searchParams.page;
+  const searchParams = await props.searchParams;
+  const pageParam = searchParams?.page;
 
   // Parse page and filters using extracted values
   const page = parseInt(pageParam || "1", 10);
-  const filters = parseFiltersFromValues(searchParams);
+  const filters = parseFiltersFromValues(searchParams ?? {});
 
   // Fetch initial data on the server
   const { profiles, totalCount } = await getProfiles({
