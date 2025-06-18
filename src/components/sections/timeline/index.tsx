@@ -154,7 +154,7 @@ export function Timeline() {
                               <div className="mb-4">
                                 <h4 className="text-sm font-semibold flex items-center mb-2">
                                   <Briefcase className="w-4 h-4 mr-2 text-primary" />
-                                  Events
+                                  Tasks
                                 </h4>
                                 <ul className="grid grid-cols-1 gap-2">
                                   {item.events.map((event, i) => (

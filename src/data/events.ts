@@ -20,7 +20,7 @@ export const events: Events = [
     year: 2025,
     periodType: "Q",
     periodNumber: 2,
-    isChecked: false,
+    isChecked: true,
     events: [
       { title: "Add Admin Dashboard", isChecked: true, type: "Development" },
       { title: "Realtime messages Feature", isChecked: true, type: "Development" },
@@ -32,7 +32,7 @@ export const events: Events = [
       { title: "Add Theme", isChecked: true, type: "Deployment" },
       { title: "Redesign the landing page", isChecked: true, type: "Deployment" },
       { title: "Add Web Analytics", isChecked: true, type: "Marketing" },
-      { title: "Beta Testing", isChecked: false, type: "Deployment" },
+      { title: "Beta Testing", isChecked: true, type: "Deployment" },
     ],
   },
   {
