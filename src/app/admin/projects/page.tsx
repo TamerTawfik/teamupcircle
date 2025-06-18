@@ -1,18 +1,9 @@
-import { prisma } from "@/lib/prisma";
+import { getProjects } from "@/app/actions/admin";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 
 export default async function AdminProjectsPage() {
-  const projects = await prisma.project.findMany({
-    include: {
-      owner: {
-        select: { name: true, email: true },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const projects = await getProjects();
 
   return (
     <div className="space-y-4">

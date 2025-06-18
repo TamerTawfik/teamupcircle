@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { prisma } from "@/lib/prisma";
+import { getDashboardStats } from "@/app/actions/admin";
 import {
   Users,
   Ban,
@@ -8,28 +8,16 @@ import {
   UsersRound,
   Group,
 } from "lucide-react";
-import { ConnectionStatus, ProjectMembershipStatus } from "@prisma/client";
 
 export default async function AdminDashboard() {
-  const [
+  const {
     totalUsers,
     blockedUsers,
     totalFeedback,
     totalProjects,
     totalConnections,
     multiMemberProjects,
-  ] = await Promise.all([
-    prisma.user.count(),
-    prisma.user.count({ where: { status: "BLOCKED" } }),
-    prisma.feedback.count(),
-    prisma.project.count(),
-    prisma.connection.count({ where: { status: ConnectionStatus.ACCEPTED } }),
-    prisma.project.count({
-      where: {
-        members: { some: { status: ProjectMembershipStatus.ACCEPTED } },
-      },
-    }),
-  ]);
+  } = await getDashboardStats();
 
   const stats = [
     {

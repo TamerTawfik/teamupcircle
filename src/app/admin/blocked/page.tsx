@@ -1,19 +1,12 @@
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { prisma } from "@/lib/prisma";
+import { getBlockedUsers } from "@/app/actions/admin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Ban, Clock } from "lucide-react";
 import { formatDistance } from "date-fns";
 
 export default async function BlockedUsersPage() {
-  const blockedUsers = await prisma.user.findMany({
-    where: {
-      status: "BLOCKED",
-    },
-    orderBy: {
-      blockedAt: "desc",
-    },
-  });
+  const blockedUsers = await getBlockedUsers();
 
   const stats = [
     {

@@ -1,35 +1,11 @@
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { prisma } from "@/lib/prisma";
+import { getFeedback } from "@/app/actions/admin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageSquare, CheckCircle, XCircle, Clock } from "lucide-react";
 
 export default async function FeedbackPage() {
-  const [feedbacks, stats] = await Promise.all([
-    prisma.feedback.findMany({
-      include: {
-        user: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    }),
-    prisma.feedback.groupBy({
-      by: ["status"],
-      _count: true,
-    }),
-  ]);
-
-  const statusCounts = {
-    PENDING: 0,
-    REVIEWED: 0,
-    RESOLVED: 0,
-    REJECTED: 0,
-  };
-
-  stats.forEach((stat) => {
-    statusCounts[stat.status] = stat._count;
-  });
+  const { feedbacks, statusCounts } = await getFeedback();
 
   const statCards = [
     {

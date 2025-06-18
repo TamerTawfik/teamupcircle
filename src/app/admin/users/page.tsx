@@ -1,13 +1,9 @@
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { prisma } from "@/lib/prisma";
+import { getUsers } from "@/app/actions/admin";
 
 export default async function UsersPage() {
-  const users = await prisma.user.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const users = await getUsers();
 
   return (
     <div className="space-y-6">
