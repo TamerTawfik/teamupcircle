@@ -49,12 +49,7 @@ export const events: Events = [
       { title: "Team Collaboration", isChecked: false, type: "Development" },
       { title: "Team Discovery", isChecked: false, type: "Development" },
       { title: "Team Joining Flow", isChecked: false, type: "Development" },
-      { title: "Core Matching Engine", isChecked: false, type: "Development" },
-      { title: "Project-Developer Matching", isChecked: false, type: "Development" },
-      { title: "Event-Developer Matching", isChecked: false, type: "Development" },
-      { title: "Team Formation Matching", isChecked: false, type: "Development" },
-      { title: "Developer-to-Project/Event Matching", isChecked: false, type: "Development" },
-      { title: "Matching UI & Experience", isChecked: false, type: "Development" },
+      
     ],
   },
   {
@@ -63,7 +58,12 @@ export const events: Events = [
     periodNumber: 4,
     isChecked: false,
     events: [
-      { title: "To be Planned", isChecked: false, type: "Marketing" },
+      { title: "Core Matching Engine", isChecked: false, type: "Development" },
+      { title: "Project-Developer Matching", isChecked: false, type: "Development" },
+      { title: "Event-Developer Matching", isChecked: false, type: "Development" },
+      { title: "Team Formation Matching", isChecked: false, type: "Development" },
+      { title: "Developer-to-Project/Event Matching", isChecked: false, type: "Development" },
+      { title: "Matching UI & Experience", isChecked: false, type: "Development" },
     ],
   },
   
